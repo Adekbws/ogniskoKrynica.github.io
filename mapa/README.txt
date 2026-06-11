@@ -1,1 +1,3 @@
-P0 v2: baza z _baza.pdf, obszary z poprawionej _maska.pdf. Bez stroke i bez numerów lokali w overlay.
+Interaktywna mapa apartamentów. Warstwy: baza_bez_punktow, maska, punkty. Brak stroke i dodatkowych numerów w overlay.
+
+Poprawka: punkty renderowane bez czyszczenia/tworzenia przezroczystosci z bieli; polygony domyslnie przezroczyste, podswietlenie tylko po hover/focus/list active.
