@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2000 2105" width="2000" height="2105">
+<style>
+.apt-area {
+  fill: rgba(70,70,70,.24);
+  stroke: none;
+  transition: fill .18s ease, filter .18s ease;
+}
+.apt-link:hover .apt-area,
+.apt-link:focus .apt-area {
+  fill: rgba(112,70,57,.38);
+  filter: drop-shadow(0 8px 14px rgba(80,50,32,.18));
+}
+</style>
+<a class="apt-link" href="apartament-lu-1.html" data-apt="LU.1" aria-label="LU.1">
+  <polygon class="apt-area" points="1311,1110 1309,1273 1305,1275 1305,1287 1400,1288 1401,1356 1764,1356 1764,1136 1377,1136 1376,1110" />
+</a>
+<a class="apt-link" href="apartament-lu-2.html" data-apt="LU.2" aria-label="LU.2">
+  <polygon class="apt-area" points="1199,1136 833,1137 833,1512 663,1513 663,1812 1042,1745 1042,1357 1199,1356" />
+</a>
+<a class="apt-link" href="apartament-lu-3.html" data-apt="LU.3" aria-label="LU.3">
+  <polygon class="apt-area" points="317,979 331,1337 579,1336 580,1302 630,1302 631,1306 642,1307 642,1360 663,1361 663,1492 804,1492 804,1287 712,1287 711,1242 580,1241 580,979" />
+</a>
+<a class="apt-link" href="apartament-lu-4.html" data-apt="LU.4" aria-label="LU.4">
+  <polygon class="apt-area" points="241,496 241,693 310,694 316,960 579,960 579,496" />
+</a>
+<a class="apt-link" href="apartament-lu-5.html" data-apt="LU.5" aria-label="LU.5">
+  <polygon class="apt-area" points="248,283 248,471 580,471 580,264 264,264 264,282" />
+</a>
+<a class="apt-link" href="apartament-lu-6.html" data-apt="LU.6" aria-label="LU.6">
+  <polygon class="apt-area" points="1067,681 1067,938 1084,938 1085,950 1764,950 1764,681" />
+</a>
+</svg>
