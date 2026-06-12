@@ -178,7 +178,7 @@
   margin-right:auto;
 }
 .map-canvas{
-  max-height:430px;
+  max-height:930px;
   width:min(100%,calc(var(--map-w) * 1px));
 }
 .map-base,.map-overlay,.map-points{
