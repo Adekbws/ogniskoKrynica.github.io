@@ -3,6 +3,7 @@
   --paper: #fffaf1;
   --primary: #704639;
   --accent: #873400;
+  --accent2: #7a3e23;
   --muted: #7d6f65;
   --dark: #191411;
   --line: rgba(112, 70, 57, 0.18);
@@ -163,12 +164,12 @@ h2 {
   margin: 0;
 }
 h1 {
-  font-size: clamp(54px, 7.8vw, 124px);
+  font-size: clamp(38px, 5.46vw, 87px);
   letter-spacing: -0.055em;
   max-width: 1050px;
 }
 h2 {
-  font-size: clamp(42px, 5vw, 84px);
+  font-size: clamp(29px, 3.5vw, 59px);
   letter-spacing: -0.045em;
 }
 h3 {
@@ -277,8 +278,7 @@ h3 {
 .story-copy p,
 .location-copy p,
 .selector-top p,
-.investment p,
-.contact p {
+.investment p {
   font-size: 18px;
   line-height: 1.75;
   color: var(--muted);
@@ -335,7 +335,7 @@ h3 {
 }
 .gallery-mosaic {
   display: grid;
-  grid-template-columns: 1.45fr 0.8fr 0.8fr;
+  grid-template-columns: 1.45fr 1.45fr;
   grid-auto-rows: 310px;
   gap: 18px;
 }
@@ -554,7 +554,7 @@ h3 {
 .contact {
   margin: 0 max(36px, calc((100vw - var(--max)) / 2)) 60px;
   border-radius: 54px;
-  background: var(--dark);
+  background: var(--accent2);
   color: #fff;
   padding: 70px;
   display: grid;
@@ -563,7 +563,39 @@ h3 {
   align-items: center;
 }
 .contact p {
-  color: rgba(255, 255, 255, 0.72);
+  font-size: 18px;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.86);
+}
+.contact .eyebrow {
+  color: #ffd6bd;
+}
+.contact form {
+  background: rgba(255, 250, 241, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 34px;
+  padding: 22px;
+}
+.contact input {
+  background: var(--paper);
+  border: 1px solid rgba(112, 70, 57, 0.22);
+  color: var(--dark);
+}
+.contact input::placeholder {
+  color: var(--muted);
+}
+.contact input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.18);
+}
+.contact button {
+  background: #fff;
+  color: var(--accent2);
+}
+.contact button:hover {
+  background: var(--paper);
+  color: var(--primary);
 }
 form {
   display: grid;
@@ -740,23 +772,24 @@ form button:hover {
   font-family:
     "Gill Sans Medium", "Gill Sans", "Gill Sans MT", Manrope, system-ui,
     sans-serif;
-  font-size: 34px;
+  font-size: 24px;
   margin-bottom: 34px;
 }
 .apartments-table-wrap {
   overflow: auto;
+  border-radius: 34px;
 }
 .apartments-table {
   width: 100%;
   border-collapse: collapse;
   background: #e9ded0;
   color: #000;
-  font-size: 18px;
+  font-size: 16px;
 }
 .apartments-table th,
 .apartments-table td {
   text-align: center;
-  padding: 20px 26px;
+  padding: 12px 26px;
   border-bottom: 1px solid #eee8df;
   white-space: nowrap;
 }
@@ -846,7 +879,7 @@ form button:hover {
 .hero-content {
   position: relative;
   z-index: 2;
-  width: min(980px, calc(100% - 48px));
+  width: min(1096px, calc(100% - 48px));
   margin: 0 auto 110px;
   transform: translateX(-18%);
   padding-bottom: 0;
@@ -927,9 +960,9 @@ form button:hover {
   align-items: center;
   justify-content: center;
   min-width: 96px;
-  padding: 8px 12px;
+  padding: 4px 12px;
   border-radius: 999px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 800;
 }
 .status-pill.available {
@@ -946,7 +979,7 @@ form button:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
+  min-height: 32px;
   padding: 0 14px;
   border-radius: 999px;
   background: var(--primary);
