@@ -828,7 +828,7 @@ form button:hover {
 .lang-switch a {
   width: 34px;
   height: 34px;
-  padding-bottom: 5px;
+  padding-bottom: 3px;
   display: grid;
   place-items: center;
   border-radius: 999px;
@@ -1017,6 +1017,9 @@ form button:hover {
 @media (max-width: 900px) {
   .nav .lang-switch {
     display: flex;
+    a {
+      padding-bottom: 2px;
+    }
   }
   .real-map-module {
     max-width: 100%;
@@ -1185,13 +1188,25 @@ form button:hover {
     display: none;
   }
 
-  .nav-cta--menu {
+  .nav nav a.nav-cta--menu {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin-top: 8px;
     text-align: center;
+    color: rgb(243, 208, 183);
+    background: rgba(255, 255, 255, 0.1);
+    transform: none;
+    box-shadow: none;
+  }
+
+  .nav nav a.nav-cta--menu:hover,
+  .nav nav a.nav-cta--menu:active,
+  .nav nav a.nav-cta--menu:focus-visible {
+    background: #fff;
     color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
   }
 
   .nav nav a:not(.nav-cta) {
