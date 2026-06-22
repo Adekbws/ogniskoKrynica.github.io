@@ -49,16 +49,27 @@ img {
 }
 .brand {
   display: flex;
+  gap: 14px;
   align-items: center;
   margin-right: 20px;
 }
 .brand-mark {
   width: auto;
-  height: 48px;
-  max-width: 200px;
+  height: 42px;
   display: block;
   object-fit: contain;
   flex-shrink: 0;
+}
+.brand strong {
+  display: block;
+  line-height: 1;
+  font-size: 18px;
+}
+.brand small {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  opacity: 0.74;
 }
 .nav nav {
   display: flex;
@@ -766,9 +777,6 @@ form button:hover {
   overflow: auto;
   border-radius: 34px;
 }
-.label-mobile {
-  display: none;
-}
 .apartments-table {
   width: 100%;
   border-collapse: collapse;
@@ -797,12 +805,10 @@ form button:hover {
   .real-map-module {
     padding: 10px;
     border-radius: 28px;
-    overflow: hidden;
+    overflow: auto;
   }
   .map-canvas {
-    width: 100%;
-    min-width: 0;
-    max-height: none;
+    min-width: 900px;
   }
   .apartments-table th,
   .apartments-table td {
@@ -822,7 +828,7 @@ form button:hover {
 .lang-switch a {
   width: 34px;
   height: 34px;
-  padding-bottom: 3px;
+  padding-bottom: 5px;
   display: grid;
   place-items: center;
   border-radius: 999px;
@@ -1047,14 +1053,35 @@ form button:hover {
 
   .brand {
     margin-right: auto;
+    gap: 14px;
     min-width: 0;
     align-items: center;
   }
 
+  .brand > span {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    padding-left: 2px;
+  }
+
   .brand-mark {
-    height: 38px;
-    max-width: min(168px, 42vw);
-    flex-shrink: 1;
+    height: 36px;
+    flex-shrink: 0;
+    margin-right: 2px;
+  }
+
+  .brand strong {
+    font-size: 15px;
+    line-height: 1.15;
+  }
+
+  .brand small {
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    line-height: 1.1;
+    opacity: 0.8;
   }
 
   .nav-toggle {
@@ -1167,10 +1194,9 @@ form button:hover {
     justify-content: center;
     margin-top: 8px;
     text-align: center;
-    color: rgb(243, 208, 183);
-    background: rgba(255, 255, 255, 0.1);
-    transform: none;
-    box-shadow: none;
+    background: rgba(112, 70, 57, 0.55);
+    color: #f3d0b7;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .nav nav a.nav-cta--menu:hover,
@@ -1178,8 +1204,9 @@ form button:hover {
   .nav nav a.nav-cta--menu:focus-visible {
     background: #fff;
     color: var(--primary);
-    transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    border-color: #fff;
+    transform: none;
+    box-shadow: none;
   }
 
   .nav nav a:not(.nav-cta) {
@@ -1296,17 +1323,26 @@ form button:hover {
   .real-map-module {
     padding: 12px;
     border-radius: 28px;
-    overflow: hidden;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
   }
 
   .real-map-module::after {
-    display: none;
+    content: "Przesuń mapę w bok";
+    display: block;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
 
   .map-canvas {
-    width: 100%;
-    min-width: 0;
-    max-height: none;
+    min-width: 720px;
   }
 
   .apartments-table-block {
@@ -1320,102 +1356,17 @@ form button:hover {
   }
 
   .apartments-table-wrap {
-    overflow: visible;
     border-radius: 24px;
-  }
-
-  .label-desktop {
-    display: none;
-  }
-
-  .label-mobile {
-    display: inline;
+    -webkit-overflow-scrolling: touch;
   }
 
   .apartments-table {
-    table-layout: fixed;
-    width: 100%;
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .apartments-table th,
   .apartments-table td {
-    padding: 10px 4px;
-    white-space: normal;
-    word-break: break-word;
-    line-height: 1.25;
-  }
-
-  .apartments-table th {
-    font-size: 10px;
-    letter-spacing: 0.03em;
-    text-transform: lowercase;
-  }
-
-  .apartments-table th:nth-child(1) {
-    width: 11%;
-  }
-
-  .apartments-table th:nth-child(2) {
-    width: 10%;
-  }
-
-  .apartments-table th:nth-child(3) {
-    width: 18%;
-  }
-
-  .apartments-table th:nth-child(3),
-  .apartments-table td:nth-child(3) {
-    white-space: nowrap;
-    word-break: keep-all;
-  }
-
-  .apartments-table th:nth-child(4) {
-    width: 28%;
-  }
-
-  .apartments-table th:nth-child(5) {
-    width: 10%;
-  }
-
-  .apartments-table th:nth-child(6) {
-    width: 23%;
-  }
-
-  .apartments-table th:nth-child(5),
-  .apartments-table td:nth-child(5) {
-    padding-right: 2px;
-  }
-
-  .apartments-table th:nth-child(6),
-  .apartments-table td:nth-child(6) {
-    padding-left: 2px;
-  }
-
-  .status-pill {
-    width: 12px;
-    height: 12px;
-    min-width: 0;
-    padding: 0;
-    border-radius: 50%;
-  }
-
-  .status-pill-text {
-    display: none;
-  }
-
-  .pdf-btn {
-    min-height: 28px;
-    min-width: 0;
-    padding: 0 8px;
-    font-size: 0;
-    line-height: 1;
-  }
-
-  .pdf-btn::after {
-    content: "PDF";
-    font-size: 10px;
-    font-weight: 800;
+    padding: 12px 14px;
   }
 
   .gallery-mosaic {
@@ -1449,9 +1400,28 @@ form button:hover {
     padding: 8px 10px 8px 14px;
   }
 
+  .brand {
+    gap: 12px;
+  }
+
+  .brand > span {
+    gap: 5px;
+    padding-left: 3px;
+  }
+
   .brand-mark {
     height: 34px;
-    max-width: min(148px, 46vw);
+    margin-right: 3px;
+  }
+
+  .brand strong {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .brand small {
+    font-size: 7px;
+    letter-spacing: 0.12em;
   }
 
   h1 {
@@ -1532,47 +1502,19 @@ form button:hover {
     flex: 1 1 100%;
   }
 
-  .apartments-table {
-    font-size: 11px;
+  .map-canvas {
+    min-width: 640px;
   }
 
-  .apartments-table th,
-  .apartments-table td {
-    padding: 8px 2px;
-  }
-
-  .apartments-table th:nth-child(3) {
-    width: 21%;
-  }
-
-  .apartments-table th:nth-child(4) {
-    width: 29%;
-  }
-
-  .apartments-table th:nth-child(6) {
-    width: 23%;
-  }
-
-  .apartments-table th:nth-child(5),
-  .apartments-table td:nth-child(5) {
-    padding-right: 0;
-  }
-
-  .apartments-table th:nth-child(6),
-  .apartments-table td:nth-child(6) {
-    padding-left: 0;
-  }
-
-  .apartments-table th {
-    font-size: 9px;
+  .status-pill {
+    min-width: 84px;
+    font-size: 12px;
+    padding: 4px 10px;
   }
 
   .pdf-btn {
-    padding: 0 6px;
-    min-height: 26px;
-  }
-
-  .pdf-btn::after {
-    font-size: 9px;
+    font-size: 12px;
+    padding: 0 12px;
+    min-height: 30px;
   }
 }

@@ -49,16 +49,27 @@ img {
 }
 .brand {
   display: flex;
+  gap: 14px;
   align-items: center;
   margin-right: 20px;
 }
 .brand-mark {
   width: auto;
-  height: 48px;
-  max-width: 200px;
+  height: 42px;
   display: block;
   object-fit: contain;
   flex-shrink: 0;
+}
+.brand strong {
+  display: block;
+  line-height: 1;
+  font-size: 18px;
+}
+.brand small {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  opacity: 0.74;
 }
 .nav nav {
   display: flex;
@@ -1047,14 +1058,35 @@ form button:hover {
 
   .brand {
     margin-right: auto;
+    gap: 14px;
     min-width: 0;
     align-items: center;
   }
 
+  .brand > span {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    padding-left: 2px;
+  }
+
   .brand-mark {
-    height: 38px;
-    max-width: min(168px, 42vw);
-    flex-shrink: 1;
+    height: 36px;
+    flex-shrink: 0;
+    margin-right: 2px;
+  }
+
+  .brand strong {
+    font-size: 15px;
+    line-height: 1.15;
+  }
+
+  .brand small {
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    line-height: 1.1;
+    opacity: 0.8;
   }
 
   .nav-toggle {
@@ -1449,9 +1481,28 @@ form button:hover {
     padding: 8px 10px 8px 14px;
   }
 
+  .brand {
+    gap: 12px;
+  }
+
+  .brand > span {
+    gap: 5px;
+    padding-left: 3px;
+  }
+
   .brand-mark {
     height: 34px;
-    max-width: min(148px, 46vw);
+    margin-right: 3px;
+  }
+
+  .brand strong {
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .brand small {
+    font-size: 7px;
+    letter-spacing: 0.12em;
   }
 
   h1 {
