@@ -18,10 +18,22 @@
         ><span class="brand-mark">O</span
         ><span><strong>Ognisko</strong><small>Apartamenty</small></span></a
       >
-      <nav>
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="site-nav"
+        aria-label="Otwórz menu"
+      >
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+      </button>
+      <nav id="site-nav">
         <a href="#inwestycja">Inwestycja</a
         ><a href="#lokalizacja">Lokalizacja</a
         ><a href="#wybor">Wybór apartamentu</a><a href="#kontakt">Kontakt</a>
+        <a class="nav-cta nav-cta--menu" href="#kontakt">Zadzwoń</a>
       </nav>
 
       <div class="lang-switch" aria-label="Wybór języka">
@@ -29,8 +41,9 @@
         <a href="#" aria-label="English" title="English">🇬🇧</a>
         <a href="#" aria-label="Slovenčina" title="Slovenčina">🇸🇰</a>
       </div>
-      <a class="nav-cta" href="#kontakt">Zadzwoń</a>
+      <a class="nav-cta nav-cta--desktop" href="#kontakt">Zadzwoń</a>
     </header>
+    <div class="nav-backdrop" hidden></div>
 
     <main>
       <section class="hero">
