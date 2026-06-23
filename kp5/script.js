@@ -1,4 +1,10 @@
 (()=> {
+  const CONTACT_PHONE = "+48503653375";
+
+  document.querySelectorAll(".nav-cta--menu").forEach((link) => {
+    link.href = `tel:${CONTACT_PHONE}`;
+  });
+
   const nav = document.querySelector(".nav");
   const toggle = document.querySelector(".nav-toggle");
   const backdrop = document.querySelector(".nav-backdrop");
