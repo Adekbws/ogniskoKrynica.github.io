@@ -44,4 +44,79 @@
       el.addEventListener("blur", () => setActive(id, false));
     });
   });
+
+  const tableHeadRow = document.querySelector(".apartments-table thead tr");
+  tableHeadRow?.children[5]?.remove();
+  document
+    .querySelectorAll(".apartments-table tbody tr")
+    .forEach((row) => row.children[5]?.remove());
+
+  const rows = document.querySelectorAll(".apartments-table tbody tr");
+  const cardModal = document.querySelector("#card-modal");
+  const closeModalTriggers = document.querySelectorAll("[data-close-modal]");
+  const openRequestBtn = document.querySelector("[data-open-request]");
+  const backToPreviewBtn = document.querySelector("[data-back-preview]");
+  const requestForm = document.querySelector("[data-request-form]");
+  const requestNote = document.querySelector("[data-request-note]");
+  const previewPanel = document.querySelector('[data-panel="preview"]');
+  const requestPanel = document.querySelector('[data-panel="request"]');
+  const modalTitle = document.querySelector("#card-modal-title");
+  const requestEmailInput = requestForm?.querySelector('input[name="email"]');
+
+  function setRequestPanel(open) {
+    previewPanel.hidden = open;
+    requestPanel.hidden = !open;
+    if (open) requestEmailInput?.focus();
+  }
+
+  function openCardModal(row) {
+    if (!cardModal) return;
+    const apartmentNo = row.children[0]?.textContent?.trim() || "";
+    modalTitle.textContent = apartmentNo
+      ? `Lokal ${apartmentNo} - karta`
+      : "Karta lokalu";
+    cardModal.hidden = false;
+    document.body.classList.add("modal-open");
+    requestForm?.reset();
+    requestNote.textContent = "";
+    setRequestPanel(false);
+  }
+
+  function closeCardModal() {
+    if (!cardModal) return;
+    cardModal.hidden = true;
+    document.body.classList.remove("modal-open");
+    setRequestPanel(false);
+  }
+
+  rows.forEach((row) => {
+    row.tabIndex = 0;
+    row.setAttribute("role", "button");
+    row.setAttribute("aria-label", "Otwórz kartę lokalu");
+    row.addEventListener("click", () => openCardModal(row));
+    row.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openCardModal(row);
+      }
+    });
+  });
+
+  closeModalTriggers.forEach((trigger) =>
+    trigger.addEventListener("click", closeCardModal),
+  );
+  openRequestBtn?.addEventListener("click", () => setRequestPanel(true));
+  backToPreviewBtn?.addEventListener("click", () => setRequestPanel(false));
+  requestForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const email = requestEmailInput?.value?.trim();
+    if (!email) return;
+    requestNote.textContent = `Dziękujemy. Kartę lokalu wyślemy na ${email}.`;
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && cardModal && !cardModal.hidden) {
+      closeCardModal();
+    }
+  });
 })();
