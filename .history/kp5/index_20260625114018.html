@@ -8,7 +8,7 @@
       name="description"
       content="Apartamenty Ognisko w Krynicy-Zdroju — kameralna inwestycja 22 lokali przy ul. Leśnej 34. Apartamenty na sprzedaż, wykończenie pod klucz, blisko centrum i stoków."
     />
-    <link rel="canonical" href="https://apartamentyognisko.pl/" />
+    <link rel="canonical" href="https://apartamentyognisko.pl/kp5/" />
     <meta name="robots" content="index, follow" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pl_PL" />
@@ -20,10 +20,10 @@
       property="og:description"
       content="Kameralna inwestycja apartamentowa w Krynicy-Zdroju. Sprawdź dostępne lokale, metraże i ceny."
     />
-    <meta property="og:url" content="https://apartamentyognisko.pl/" />
+    <meta property="og:url" content="https://apartamentyognisko.pl/kp5/" />
     <meta
       property="og:image"
-      content="https://apartamentyognisko.pl/assets/building.jpg"
+      content="https://apartamentyognisko.pl/kp5/assets/building.jpg"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Apartamenty Ognisko Krynica-Zdrój" />
@@ -33,7 +33,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://apartamentyognisko.pl/assets/building.jpg"
+      content="https://apartamentyognisko.pl/kp5/assets/building.jpg"
     />
     <link
       rel="icon"
@@ -54,19 +54,18 @@
         "@graph": [
           {
             "@type": "WebSite",
-            "@id": "https://apartamentyognisko.pl/#website",
-            "url": "https://apartamentyognisko.pl/",
+            "@id": "https://apartamentyognisko.pl/kp5/#website",
+            "url": "https://apartamentyognisko.pl/kp5/",
             "name": "Apartamenty Ognisko",
             "inLanguage": "pl-PL"
           },
           {
             "@type": "ApartmentComplex",
-            "@id": "https://apartamentyognisko.pl/#complex",
+            "@id": "https://apartamentyognisko.pl/kp5/#complex",
             "name": "Apartamenty Ognisko",
             "description": "Kameralna inwestycja 22 apartamentów w zabytkowym pensjonacie przy ul. Leśnej 34 w Krynicy-Zdroju.",
-            "url": "https://apartamentyognisko.pl/",
+            "url": "https://apartamentyognisko.pl/kp5/",
             "telephone": "+48664663940",
-            "email": "kontakt@apartamentyognisko.pl",
             "numberOfAccommodationUnits": 22,
             "address": {
               "@type": "PostalAddress",
@@ -80,24 +79,6 @@
               "@type": "GeoCoordinates",
               "latitude": 49.4215,
               "longitude": 20.9594
-            },
-            "parentOrganization": {
-              "@id": "https://apartamentyognisko.pl/#organization"
-            }
-          },
-          {
-            "@type": "Organization",
-            "@id": "https://apartamentyognisko.pl/#organization",
-            "name": "BOBROWY RESORT & SPA SP. Z O.O.",
-            "taxID": "9662170881",
-            "email": "kontakt@apartamentyognisko.pl",
-            "telephone": "+48664663940",
-            "address": {
-              "@type": "PostalAddress",
-              "streetAddress": "ul. Warszawska 6/32",
-              "addressLocality": "Białystok",
-              "postalCode": "15-063",
-              "addressCountry": "PL"
             }
           }
         ]
@@ -1158,26 +1139,10 @@
             <strong>BOBROWY RESORT &amp; SPA SP. Z O.O.</strong><br />
             Ul. Warszawska 6/32, 15-063 Białystok<br />
             NIP: 9662170881<br />
-            <a href="tel:+48664663940">+48 664 663 940</a><br />
-            <a href="mailto:kontakt@apartamentyognisko.pl"
-              >kontakt@apartamentyognisko.pl</a
-            >
+            <a href="tel:+48664663940">+48 664 663 940</a>
           </address>
         </div>
-        <form class="contact-form" action="contact.php" method="post">
-          <input type="hidden" name="form_type" value="contact" />
-          <input type="hidden" name="redirect" value="/" />
-          <input type="hidden" name="form_ts" value="" data-form-ts />
-          <div class="form-honeypot" aria-hidden="true">
-            <label for="contact-website">Strona www</label>
-            <input
-              type="text"
-              name="website"
-              id="contact-website"
-              tabindex="-1"
-              autocomplete="off"
-            />
-          </div>
+        <form action="#kontakt" method="post">
           <label class="sr-only" for="contact-name">Imię i nazwisko</label>
           <input
             id="contact-name"
@@ -1201,15 +1166,11 @@
             type="email"
             autocomplete="email"
             placeholder="E-mail"
-            required
           />
           <button type="submit">Wyślij zapytanie</button>
-          <p class="contact-form-status" data-form-status hidden></p>
           <p class="contact-privacy">
-            Administratorem danych jest BOBROWY RESORT &amp; SPA Sp. z o.o.
-            Wysyłając formularz, akceptujesz
-            <a href="polityka-prywatnosci/">politykę prywatności</a> i
-            wyrażasz zgodę na kontakt w sprawie oferty apartamentów.
+            Wysyłając formularz, wyrażasz zgodę na kontakt w sprawie oferty
+            apartamentów.
           </p>
         </form>
       </section>
@@ -1218,11 +1179,7 @@
         <p>
           © BOBROWY RESORT &amp; SPA SP. Z O.O. · Ul. Warszawska 6/32, 15-063
           Białystok · NIP: 9662170881 ·
-          <a href="tel:+48664663940">+48 664 663 940</a> ·
-          <a href="mailto:kontakt@apartamentyognisko.pl"
-            >kontakt@apartamentyognisko.pl</a
-          >
-          · <a href="polityka-prywatnosci/">Polityka prywatności</a>
+          <a href="tel:+48664663940">+48 664 663 940</a>
         </p>
       </footer>
 
@@ -1263,19 +1220,6 @@
             <p class="card-modal-eyebrow">Pobieranie informacji</p>
             <h3>Podaj e-mail, wyślemy kartę lokalu</h3>
             <form class="card-request-form" data-request-form>
-              <input type="hidden" name="form_type" value="card" />
-              <input type="hidden" name="form_ts" value="" data-form-ts />
-              <input type="hidden" name="apartment" value="" data-apartment-input />
-              <div class="form-honeypot" aria-hidden="true">
-                <label for="card-website">Strona www</label>
-                <input
-                  type="text"
-                  name="website"
-                  id="card-website"
-                  tabindex="-1"
-                  autocomplete="off"
-                />
-              </div>
               <input
                 class="card-request-input"
                 type="email"
@@ -1284,10 +1228,6 @@
                 required
               />
               <button class="card-modal-cta" type="submit">Wyślij kartę</button>
-              <p class="card-request-privacy">
-                Wysyłając formularz, akceptujesz
-                <a href="polityka-prywatnosci/">politykę prywatności</a>.
-              </p>
             </form>
             <p class="card-request-note" data-request-note></p>
             <button

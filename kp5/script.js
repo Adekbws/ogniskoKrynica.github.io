@@ -1,9 +1,51 @@
 ﻿(()=> {
   const CONTACT_PHONE = "+48664663940";
+  const FORM_TS_SELECTOR = "[data-form-ts]";
+  const FORM_STATUS_SELECTOR = "[data-form-status]";
+  const FORM_ERROR_MESSAGES = {
+    spam: "Nie udało się wysłać formularza. Spróbuj ponownie lub napisz na kontakt@apartamentyognisko.pl.",
+    timing: "Formularz wysłano zbyt szybko. Odśwież stronę i spróbuj ponownie.",
+    rate: "Zbyt wiele prób w krótkim czasie. Spróbuj ponownie za chwilę.",
+    email: "Podaj poprawny adres e-mail.",
+    send: "Wystąpił błąd wysyłki. Napisz do nas na kontakt@apartamentyognisko.pl.",
+    apartment: "Nie udało się rozpoznać numeru lokalu. Spróbuj ponownie.",
+  };
 
   document.querySelectorAll(".nav-cta--menu").forEach((link) => {
     link.href = `tel:${CONTACT_PHONE}`;
   });
+
+  const formTimestamp = String(Math.floor(Date.now() / 1000));
+  document.querySelectorAll(FORM_TS_SELECTOR).forEach((input) => {
+    input.value = formTimestamp;
+  });
+
+  function showContactFormStatus() {
+    const params = new URLSearchParams(window.location.search);
+    const statusNode = document.querySelector(FORM_STATUS_SELECTOR);
+    if (!statusNode) return;
+
+    if (params.get("sent") === "1") {
+      statusNode.hidden = false;
+      statusNode.textContent =
+        "Dziękujemy za wiadomość. Odezwiemy się wkrótce.";
+      statusNode.classList.add("is-success");
+      statusNode.classList.remove("is-error");
+      return;
+    }
+
+    const errorCode = params.get("error");
+    if (!errorCode) return;
+
+    statusNode.hidden = false;
+    statusNode.textContent =
+      FORM_ERROR_MESSAGES[errorCode] ||
+      "Nie udało się wysłać formularza. Spróbuj ponownie.";
+    statusNode.classList.add("is-error");
+    statusNode.classList.remove("is-success");
+  }
+
+  showContactFormStatus();
 
   const nav = document.querySelector(".nav");
   const toggle = document.querySelector(".nav-toggle");
@@ -70,6 +112,7 @@
   const modalImage = document.querySelector(".card-modal-image");
   const modalImageWrap = document.querySelector(".card-modal-image-wrap");
   const requestEmailInput = requestForm?.querySelector('input[name="email"]');
+  const apartmentInput = requestForm?.querySelector("[data-apartment-input]");
 
   function normalizeApartmentId(rawId) {
     const digits = String(rawId || "").match(/\d+/)?.[0];
@@ -119,6 +162,12 @@
     document.body.classList.add("modal-open");
     requestForm?.reset();
     requestNote.textContent = "";
+    if (apartmentInput) {
+      apartmentInput.value = apartmentNo || apartmentId || "";
+    }
+    requestForm?.querySelectorAll(FORM_TS_SELECTOR).forEach((input) => {
+      input.value = formTimestamp;
+    });
     setRequestPanel(false);
   }
 
@@ -162,11 +211,46 @@
   );
   openRequestBtn?.addEventListener("click", () => setRequestPanel(true));
   backToPreviewBtn?.addEventListener("click", () => setRequestPanel(false));
-  requestForm?.addEventListener("submit", (event) => {
+  requestForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const email = requestEmailInput?.value?.trim();
-    if (!email) return;
-    requestNote.textContent = `Dziękujemy. Kartę lokalu wyślemy na ${email}.`;
+    if (!email || !requestForm) return;
+
+    const submitButton = requestForm.querySelector('button[type="submit"]');
+    submitButton?.setAttribute("disabled", "true");
+
+    try {
+      const response = await fetch("contact.php", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+        body: new FormData(requestForm),
+      });
+      const result = await response.json();
+      if (!response.ok || !result?.ok) {
+        requestNote.textContent =
+          result?.message ||
+          "Nie udało się wysłać prośby. Napisz do nas na kontakt@apartamentyognisko.pl.";
+        return;
+      }
+      requestNote.textContent =
+        result.message ||
+        `Dziękujemy. Kartę lokalu wyślemy na ${email}.`;
+      requestForm.reset();
+      document.querySelectorAll(FORM_TS_SELECTOR).forEach((input) => {
+        input.value = formTimestamp;
+      });
+      if (apartmentInput) {
+        apartmentInput.value =
+          modalTitle.textContent.match(/Lokal\s+(\d+)/)?.[1] || "";
+      }
+    } catch {
+      requestNote.textContent =
+        "Nie udało się wysłać prośby. Napisz do nas na kontakt@apartamentyognisko.pl.";
+    } finally {
+      submitButton?.removeAttribute("disabled");
+    }
   });
 
   document.addEventListener("keydown", (event) => {

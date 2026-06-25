@@ -1,5 +1,5 @@
 ﻿User-agent: *
-Allow: /kp5/
+Allow: /
 
 Disallow: /projekt
 Disallow: /mapa/
