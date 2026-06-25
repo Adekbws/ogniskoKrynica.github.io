@@ -68,6 +68,7 @@
   const requestPanel = document.querySelector('[data-panel="request"]');
   const modalTitle = document.querySelector("#card-modal-title");
   const modalImage = document.querySelector(".card-modal-image");
+  const modalImageWrap = document.querySelector(".card-modal-image-wrap");
   const requestEmailInput = requestForm?.querySelector('input[name="email"]');
 
   function normalizeApartmentId(rawId) {
@@ -81,13 +82,24 @@
   }
 
   function setModalImage(apartmentId) {
-    if (!modalImage) return;
+    if (!modalImage || !modalImageWrap) return;
     const localNo = apartmentId.replace("LU.", "");
+    modalImageWrap.classList.add("is-loading");
     modalImage.src = buildCardImagePath(apartmentId);
     modalImage.alt = localNo
       ? `Karta lokalu ${localNo}`
       : "Karta lokalu";
+    if (modalImage.complete) {
+      modalImageWrap.classList.remove("is-loading");
+    }
   }
+
+  modalImage?.addEventListener("load", () => {
+    modalImageWrap?.classList.remove("is-loading");
+  });
+  modalImage?.addEventListener("error", () => {
+    modalImageWrap?.classList.remove("is-loading");
+  });
 
   function setRequestPanel(open) {
     previewPanel.hidden = open;

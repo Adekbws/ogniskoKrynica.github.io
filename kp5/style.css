@@ -1159,6 +1159,7 @@ form button:hover {
   font-size: 11px;
 }
 .card-modal-image-wrap {
+  position: relative;
   padding: 12px;
   border-radius: 20px;
   background: #e5d9c8;
@@ -1168,6 +1169,32 @@ form button:hover {
   width: 100%;
   height: auto;
   border-radius: 14px;
+  transition: opacity 0.2s ease;
+}
+.card-modal-image-wrap.is-loading .card-modal-image {
+  opacity: 0.25;
+}
+.card-modal-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 42px;
+  height: 42px;
+  margin: -21px 0 0 -21px;
+  border-radius: 50%;
+  border: 3px solid rgba(112, 70, 57, 0.2);
+  border-top-color: var(--primary);
+  opacity: 0;
+  pointer-events: none;
+}
+.card-modal-image-wrap.is-loading .card-modal-spinner {
+  opacity: 1;
+  animation: cardSpinner 0.85s linear infinite;
+}
+@keyframes cardSpinner {
+  to {
+    transform: rotate(360deg);
+  }
 }
 .card-modal-cta,
 .card-modal-secondary {
