@@ -1,9 +1,52 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pl">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Ognisko Apartamenty - koncepcja homepage</title>
+    <title>Apartamenty Ognisko Krynica-Zdrój | 22 lokale ul. Leśna 34</title>
+    <meta
+      name="description"
+      content="Apartamenty Ognisko w Krynicy-Zdroju — kameralna inwestycja 22 lokali przy ul. Leśnej 34. Apartamenty na sprzedaż, wykończenie pod klucz, blisko centrum i stoków."
+    />
+    <link rel="canonical" href="https://apartamentyognisko.pl/kp5/" />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta
+      property="og:title"
+      content="Apartamenty Ognisko Krynica-Zdrój | 22 lokale ul. Leśna 34"
+    />
+    <meta
+      property="og:description"
+      content="Kameralna inwestycja apartamentowa w Krynicy-Zdroju. Sprawdź dostępne lokale, metraże i ceny."
+    />
+    <meta
+      property="og:url"
+      content="https://apartamentyognisko.pl/kp5/"
+    />
+    <meta
+      property="og:image"
+      content="https://apartamentyognisko.pl/kp5/assets/building.jpg"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Apartamenty Ognisko Krynica-Zdrój"
+    />
+    <meta
+      name="twitter:description"
+      content="22 apartamenty w sercu Krynicy-Zdroju — ul. Leśna 34."
+    />
+    <meta
+      name="twitter:image"
+      content="https://apartamentyognisko.pl/kp5/assets/building.jpg"
+    />
+    <link
+      rel="icon"
+      href="assets/ognisko_logo_plomien_small.png"
+      type="image/png"
+    />
+    <link rel="apple-touch-icon" href="assets/ognisko_logo_plomien_small.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -11,10 +54,46 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="style.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://apartamentyognisko.pl/kp5/#website",
+            "url": "https://apartamentyognisko.pl/kp5/",
+            "name": "Apartamenty Ognisko",
+            "inLanguage": "pl-PL"
+          },
+          {
+            "@type": "ApartmentComplex",
+            "@id": "https://apartamentyognisko.pl/kp5/#complex",
+            "name": "Apartamenty Ognisko",
+            "description": "Kameralna inwestycja 22 apartamentów w zabytkowym pensjonacie przy ul. Leśnej 34 w Krynicy-Zdroju.",
+            "url": "https://apartamentyognisko.pl/kp5/",
+            "telephone": "+48664663940",
+            "numberOfAccommodationUnits": 22,
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "ul. Leśna 34",
+              "addressLocality": "Krynica-Zdrój",
+              "postalCode": "33-380",
+              "addressRegion": "małopolskie",
+              "addressCountry": "PL"
+            },
+            "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 49.4215,
+              "longitude": 20.9594
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <header class="nav">
-      <a class="brand" href="#"
+      <a class="brand" href="./"
         ><img
           class="brand-mark"
           src="assets/ognisko_logo_plomien_napis_small.png?v=2"
@@ -41,8 +120,8 @@
       </nav>
 
       <div class="lang-switch" aria-label="Wybór języka">
-        <a href="#" aria-label="Polski" title="Polski">🇵🇱</a>
-        <a href="#" aria-label="English" title="English">🇬🇧</a>
+        <a href="./" aria-label="Polski" title="Polski" aria-current="page">🇵🇱</a>
+        <span class="lang-switch-soon" aria-label="English — wersja w przygotowaniu" title="Wersja angielska w przygotowaniu">🇬🇧</span>
       </div>
       <a class="nav-cta nav-cta--desktop" href="#kontakt">Zadzwoń</a>
     </header>
@@ -54,6 +133,9 @@
           src="assets/baner_0.png"
           alt="Apartamenty Ognisko w otoczeniu gór i lasów"
           class="hero-img"
+          fetchpriority="high"
+          width="1920"
+          height="1080"
         />
         <div class="hero-shade"></div>
         <div class="hero-content">
@@ -79,6 +161,8 @@
           <img
             src="assets/building.jpg"
             alt="Wizualizacja budynku Ognisko Apartamenty"
+            loading="lazy"
+            decoding="async"
           />
         </div>
         <div class="story-copy">
@@ -180,6 +264,8 @@
                   class="map-base"
                   src="mapa/assets/p0-baza-bez-punktow.png"
                   alt="Rzut Parter"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <svg
                   class="map-overlay"
@@ -188,7 +274,7 @@
                 >
                   <a
                     class="apt-link"
-                    href="apartament-lu-1.html"
+                    href="#lista-lokali"
                     data-apt="LU.1"
                     aria-label="LU.1"
                   >
@@ -199,7 +285,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-2.html"
+                    href="#lista-lokali"
                     data-apt="LU.2"
                     aria-label="LU.2"
                   >
@@ -210,7 +296,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-3.html"
+                    href="#lista-lokali"
                     data-apt="LU.3"
                     aria-label="LU.3"
                   >
@@ -221,7 +307,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-4.html"
+                    href="#lista-lokali"
                     data-apt="LU.4"
                     aria-label="LU.4"
                   >
@@ -232,7 +318,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-5.html"
+                    href="#lista-lokali"
                     data-apt="LU.5"
                     aria-label="LU.5"
                   >
@@ -243,7 +329,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-6.html"
+                    href="#lista-lokali"
                     data-apt="LU.6"
                     aria-label="LU.6"
                   >
@@ -267,6 +353,8 @@
                   class="map-base"
                   src="mapa/assets/p1-baza-bez-punktow.png"
                   alt="Rzut Piętro I"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <svg
                   class="map-overlay"
@@ -275,7 +363,7 @@
                 >
                   <a
                     class="apt-link"
-                    href="apartament-lu-7.html"
+                    href="#lista-lokali"
                     data-apt="LU.7"
                     aria-label="LU.7"
                   >
@@ -286,7 +374,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-8.html"
+                    href="#lista-lokali"
                     data-apt="LU.8"
                     aria-label="LU.8"
                   >
@@ -297,7 +385,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-9.html"
+                    href="#lista-lokali"
                     data-apt="LU.9"
                     aria-label="LU.9"
                   >
@@ -308,7 +396,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-10.html"
+                    href="#lista-lokali"
                     data-apt="LU.10"
                     aria-label="LU.10"
                   >
@@ -319,7 +407,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-11.html"
+                    href="#lista-lokali"
                     data-apt="LU.11"
                     aria-label="LU.11"
                   >
@@ -330,7 +418,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-12.html"
+                    href="#lista-lokali"
                     data-apt="LU.12"
                     aria-label="LU.12"
                   >
@@ -354,6 +442,8 @@
                   class="map-base"
                   src="mapa/assets/p2-baza-bez-punktow.png"
                   alt="Rzut Piętro II"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <svg
                   class="map-overlay"
@@ -362,7 +452,7 @@
                 >
                   <a
                     class="apt-link"
-                    href="apartament-lu-13.html"
+                    href="#lista-lokali"
                     data-apt="LU.13"
                     aria-label="LU.13"
                   >
@@ -373,7 +463,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-14.html"
+                    href="#lista-lokali"
                     data-apt="LU.14"
                     aria-label="LU.14"
                   >
@@ -384,7 +474,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-15.html"
+                    href="#lista-lokali"
                     data-apt="LU.15"
                     aria-label="LU.15"
                   >
@@ -395,7 +485,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-16.html"
+                    href="#lista-lokali"
                     data-apt="LU.16"
                     aria-label="LU.16"
                   >
@@ -406,7 +496,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-17.html"
+                    href="#lista-lokali"
                     data-apt="LU.17"
                     aria-label="LU.17"
                   >
@@ -417,7 +507,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-18.html"
+                    href="#lista-lokali"
                     data-apt="LU.18"
                     aria-label="LU.18"
                   >
@@ -428,7 +518,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-19.html"
+                    href="#lista-lokali"
                     data-apt="LU.19"
                     aria-label="LU.19"
                   >
@@ -452,6 +542,8 @@
                   class="map-base"
                   src="mapa/assets/p3-baza-bez-punktow.png"
                   alt="Rzut Piętro III"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <svg
                   class="map-overlay"
@@ -460,7 +552,7 @@
                 >
                   <a
                     class="apt-link"
-                    href="apartament-lu-20.html"
+                    href="#lista-lokali"
                     data-apt="LU.20"
                     aria-label="LU.20"
                   >
@@ -471,7 +563,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-21.html"
+                    href="#lista-lokali"
                     data-apt="LU.21"
                     aria-label="LU.21"
                   >
@@ -482,7 +574,7 @@
                   </a>
                   <a
                     class="apt-link"
-                    href="apartament-lu-22.html"
+                    href="#lista-lokali"
                     data-apt="LU.22"
                     aria-label="LU.22"
                   >
@@ -503,7 +595,7 @@
           </div>
         </div>
 
-        <div class="apartments-table-block">
+        <div class="apartments-table-block" id="lista-lokali">
           <h2>Lista lokali</h2>
           <div class="apartments-table-wrap">
             <table class="apartments-table">
@@ -546,7 +638,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-1.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -564,7 +656,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-2.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -582,7 +674,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-3.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -600,7 +692,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-4.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -618,7 +710,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-5.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -636,7 +728,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-6.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -654,7 +746,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-7.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -672,7 +764,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-8.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -690,7 +782,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-9.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -708,7 +800,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-10.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -726,7 +818,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-11.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -744,7 +836,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-12.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -762,7 +854,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-13.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -780,7 +872,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-14.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -798,7 +890,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-15.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -816,7 +908,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-16.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -834,7 +926,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-17.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -852,7 +944,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-18.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -870,7 +962,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-19.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -888,7 +980,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-20.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -906,7 +998,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-21.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -924,7 +1016,7 @@
                     >
                   </td>
                   <td>
-                    <a class="pdf-btn" href="karty/lokal-22.pdf" download
+                    <a class="pdf-btn" href="#lista-lokali" download
                       >Pobierz PDF</a
                     >
                   </td>
@@ -949,20 +1041,24 @@
             class="big"
             src="assets/hall2.jpg"
             alt="Wizualizacja klatki schodowej"
+            loading="lazy"
+            decoding="async"
           />
           <img
             class="big"
             src="assets/hall1.jpg"
             alt="Wizualizacja korytarza"
+            loading="lazy"
+            decoding="async"
           />
         </div>
         <div class="gallery-strip">
-          <img src="assets/lokaleglowna/M1_2b.jpg" alt="Wizualizacja lokalu M1_2" />
-          <img src="assets/lokaleglowna/M2.jpg" alt="Wizualizacja lokalu M2" />
-          <img src="assets/lokaleglowna/M3_1.jpg" alt="Wizualizacja lokalu M3_1" />
-          <img src="assets/lokaleglowna/m5_1.jpg" alt="Wizualizacja lokalu M5_1" />
-          <img src="assets/lokaleglowna/Lokal 14 (3).jpg" alt="Wizualizacja lokalu 14, ujęcie 3" />
-          <img src="assets/lokaleglowna/Lokal 14 (6).jpg" alt="Wizualizacja lokalu 14, ujęcie 6" />
+          <img src="assets/lokaleglowna/M1_2b.jpg" alt="Wizualizacja lokalu M1_2" loading="lazy" decoding="async" />
+          <img src="assets/lokaleglowna/M2.jpg" alt="Wizualizacja lokalu M2" loading="lazy" decoding="async" />
+          <img src="assets/lokaleglowna/M3_1.jpg" alt="Wizualizacja lokalu M3_1" loading="lazy" decoding="async" />
+          <img src="assets/lokaleglowna/m5_1.jpg" alt="Wizualizacja lokalu M5_1" loading="lazy" decoding="async" />
+          <img src="assets/lokaleglowna/Lokal 14 (3).jpg" alt="Wizualizacja lokalu 14, ujęcie 3" loading="lazy" decoding="async" />
+          <img src="assets/lokaleglowna/Lokal 14 (6).jpg" alt="Wizualizacja lokalu 14, ujęcie 6" loading="lazy" decoding="async" />
         </div>
       </section>
 
@@ -1008,13 +1104,51 @@
             uzdrowisku? Napisz do nas – pomożemy Ci dopasować lokal do Twoich
             osobistych potrzeb.
           </p>
+          <address class="contact-details">
+            <strong>Apartamenty Ognisko</strong><br />
+            ul. Leśna 34, 33-380 Krynica-Zdrój<br />
+            <a href="tel:+48664663940">+48 664 663 940</a>
+          </address>
         </div>
-        <form>
-          <input placeholder="Imię i nazwisko" /><input
+        <form action="#kontakt" method="post">
+          <label class="sr-only" for="contact-name">Imię i nazwisko</label>
+          <input
+            id="contact-name"
+            name="name"
+            type="text"
+            autocomplete="name"
+            placeholder="Imię i nazwisko"
+          />
+          <label class="sr-only" for="contact-phone">Telefon</label>
+          <input
+            id="contact-phone"
+            name="phone"
+            type="tel"
+            autocomplete="tel"
             placeholder="Telefon"
-          /><input placeholder="E-mail" /><button>Wyślij zapytanie</button>
+          />
+          <label class="sr-only" for="contact-email">E-mail</label>
+          <input
+            id="contact-email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            placeholder="E-mail"
+          />
+          <button type="submit">Wyślij zapytanie</button>
+          <p class="contact-privacy">
+            Wysyłając formularz, wyrażasz zgodę na kontakt w sprawie oferty
+            apartamentów.
+          </p>
         </form>
       </section>
+
+      <footer class="site-footer">
+        <p>
+          © Apartamenty Ognisko · ul. Leśna 34, 33-380 Krynica-Zdrój ·
+          <a href="tel:+48664663940">+48 664 663 940</a>
+        </p>
+      </footer>
 
       <div class="card-modal" id="card-modal" hidden>
         <div class="card-modal-backdrop" data-close-modal></div>
@@ -1039,7 +1173,7 @@
             <div class="card-modal-image-wrap">
               <img
                 class="card-modal-image"
-                src="assets/karty/ognisko_km_280326-LU7-1.png"
+                src="assets/karty/png/ognisko_km_popup_240626-LU1.png"
                 alt="Karta lokalu"
               />
             </div>

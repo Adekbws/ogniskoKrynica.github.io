@@ -1,5 +1,5 @@
-(()=> {
-  const CONTACT_PHONE = "+48503653375";
+﻿(()=> {
+  const CONTACT_PHONE = "+48664663940";
 
   document.querySelectorAll(".nav-cta--menu").forEach((link) => {
     link.href = `tel:${CONTACT_PHONE}`;
@@ -67,7 +67,27 @@
   const previewPanel = document.querySelector('[data-panel="preview"]');
   const requestPanel = document.querySelector('[data-panel="request"]');
   const modalTitle = document.querySelector("#card-modal-title");
+  const modalImage = document.querySelector(".card-modal-image");
   const requestEmailInput = requestForm?.querySelector('input[name="email"]');
+
+  function normalizeApartmentId(rawId) {
+    const digits = String(rawId || "").match(/\d+/)?.[0];
+    return digits ? `LU.${Number(digits)}` : "";
+  }
+
+  function buildCardImagePath(apartmentId) {
+    const localNo = apartmentId.replace("LU.", "");
+    return `assets/karty/png/ognisko_km_popup_240626-LU${localNo}.png`;
+  }
+
+  function setModalImage(apartmentId) {
+    if (!modalImage) return;
+    const localNo = apartmentId.replace("LU.", "");
+    modalImage.src = buildCardImagePath(apartmentId);
+    modalImage.alt = localNo
+      ? `Karta lokalu ${localNo}`
+      : "Karta lokalu";
+  }
 
   function setRequestPanel(open) {
     previewPanel.hidden = open;
@@ -78,9 +98,11 @@
   function openCardModal(row) {
     if (!cardModal) return;
     const apartmentNo = row.children[0]?.textContent?.trim() || "";
+    const apartmentId = normalizeApartmentId(row.dataset.apartmentId || apartmentNo);
     modalTitle.textContent = apartmentNo
       ? `Lokal ${apartmentNo} - karta`
       : "Karta lokalu";
+    setModalImage(apartmentId);
     cardModal.hidden = false;
     document.body.classList.add("modal-open");
     requestForm?.reset();
@@ -96,6 +118,9 @@
   }
 
   rows.forEach((row) => {
+    const apartmentNo = row.children[0]?.textContent?.trim() || "";
+    const apartmentId = normalizeApartmentId(apartmentNo);
+    row.dataset.apartmentId = apartmentId;
     row.tabIndex = 0;
     row.setAttribute("role", "button");
     row.setAttribute("aria-label", "Otwórz kartę lokalu");
@@ -105,6 +130,18 @@
         event.preventDefault();
         openCardModal(row);
       }
+    });
+  });
+
+  document.querySelectorAll(".apt-link").forEach((link) => {
+    const apartmentId = normalizeApartmentId(link.dataset.apt);
+    link.addEventListener("click", (event) => {
+      const row = Array.from(rows).find(
+        (tableRow) => tableRow.dataset.apartmentId === apartmentId,
+      );
+      if (!row) return;
+      event.preventDefault();
+      openCardModal(row);
     });
   });
 

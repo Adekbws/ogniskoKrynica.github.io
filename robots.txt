@@ -1,0 +1,8 @@
+﻿User-agent: *
+Allow: /kp5/
+
+Disallow: /projekt
+Disallow: /mapa/
+Disallow: /.history/
+
+Sitemap: https://apartamentyognisko.pl/sitemap.xml
