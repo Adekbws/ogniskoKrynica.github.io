@@ -8,6 +8,9 @@
   --dark: #191411;
   --line: rgba(112, 70, 57, 0.18);
   --max: 1500px;
+  --section-x: max(36px, calc((100vw - var(--max)) / 2));
+  --section-gap: 96px;
+  --section-head-gap: 44px;
 }
 * {
   box-sizing: border-box;
@@ -248,15 +251,18 @@ h3 {
   font-size: 20px;
   line-height: 1.35;
 }
+.image-story,
 .intro,
 .interiors,
 .selector,
 .investment {
-  padding: 120px max(36px, calc((100vw - var(--max)) / 2));
+  padding-inline: var(--section-x);
+  padding-top: var(--section-gap);
+  padding-bottom: 0;
 }
 .section-head {
   max-width: 900px;
-  margin-bottom: 48px;
+  margin-bottom: var(--section-head-gap);
 }
 .section-head.wide {
   max-width: 1150px;
@@ -297,7 +303,6 @@ h3 {
   grid-template-columns: 1.24fr 0.76fr;
   gap: 56px;
   align-items: center;
-  padding: 40px max(36px, calc((100vw - var(--max)) / 2)) 120px;
 }
 .story-img img {
   height: 760px;
@@ -305,8 +310,13 @@ h3 {
   object-fit: cover;
   border-radius: 44px;
 }
+.story-copy h2,
+.location-copy h2,
+.contact h2 {
+  margin-bottom: 24px;
+}
 .story-copy {
-  padding: 30px;
+  padding: 0;
 }
 .story-copy ul {
   margin: 30px 0 0;
@@ -374,7 +384,7 @@ h3 {
 }
 
 .location {
-  margin: 0 max(36px, calc((100vw - var(--max)) / 2));
+  margin: var(--section-gap) var(--section-x) 0;
   border-radius: 54px;
   background:
     linear-gradient(135deg, rgba(112, 70, 57, 0.96), rgba(135, 52, 0, 0.82)),
@@ -416,7 +426,7 @@ h3 {
   justify-content: space-between;
   gap: 60px;
   align-items: end;
-  margin-bottom: 36px;
+  margin-bottom: var(--section-head-gap);
 }
 .selector-top > div {
   max-width: 780px;
@@ -577,7 +587,7 @@ h3 {
   gap: 18px;
 }
 .contact {
-  margin: 0 max(36px, calc((100vw - var(--max)) / 2)) 60px;
+  margin: var(--section-gap) var(--section-x);
   border-radius: 54px;
   background: var(--accent2);
   color: #fff;
@@ -771,11 +781,9 @@ form button:hover {
   .intro,
   .interiors,
   .selector,
-  .investment {
-    padding: 80px 22px;
-  }
+  .investment,
   .image-story {
-    padding: 20px 22px 80px;
+    padding-inline: 22px;
   }
   .story-img img {
     height: 440px;
@@ -789,7 +797,7 @@ form button:hover {
   }
   .location,
   .contact {
-    margin: 0 22px 40px;
+    margin-inline: 22px;
     padding: 38px;
     border-radius: 34px;
   }
@@ -1384,6 +1392,10 @@ body.modal-open {
 
 /* ── Mobile (≤900px) — desktop styles above remain unchanged ── */
 @media (max-width: 900px) {
+  :root {
+    --section-gap: 72px;
+    --section-head-gap: 36px;
+  }
   body {
     overflow-x: clip;
   }
@@ -1612,12 +1624,13 @@ body.modal-open {
     order: 1;
   }
 
-  .section-head {
-    margin-bottom: 32px;
+  .section-head,
+  .selector-top {
+    margin-bottom: var(--section-head-gap);
   }
 
   .story-copy {
-    padding: 8px 0 0;
+    padding: 0;
   }
 
   .feature-grid article,
@@ -1808,6 +1821,11 @@ body.modal-open {
 
 /* ── Small phones (≤600px) ── */
 @media (max-width: 600px) {
+  :root {
+    --section-gap: 56px;
+    --section-head-gap: 28px;
+  }
+
   .nav {
     padding: 8px 10px 8px 14px;
   }
@@ -1836,12 +1854,12 @@ body.modal-open {
   .intro,
   .interiors,
   .selector,
-  .investment {
-    padding: 64px 18px;
+  .investment,
+  .image-story {
+    padding-inline: 18px;
   }
 
   .image-story {
-    padding: 16px 18px 64px;
     gap: 28px;
   }
 
@@ -1856,7 +1874,7 @@ body.modal-open {
 
   .location,
   .contact {
-    margin: 0 14px 32px;
+    margin-inline: 14px;
     padding: 28px 22px;
     border-radius: 28px;
   }
