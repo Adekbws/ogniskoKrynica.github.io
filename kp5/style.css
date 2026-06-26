@@ -1014,10 +1014,6 @@ form button:hover {
 .apartments-table tbody tr:nth-child(even) {
   background: #e6ddd2;
 }
-.apartments-table thead th:nth-child(6),
-.apartments-table tbody td:nth-child(6) {
-  display: none;
-}
 .apartments-table tbody tr {
   cursor: pointer;
   transition: background 0.18s ease;
@@ -1330,26 +1326,6 @@ form button:hover {
 }
 body.modal-open {
   overflow: hidden;
-}
-.pdf-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 32px;
-  padding: 0 14px;
-  border-radius: 999px;
-  background: var(--primary);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 800;
-  white-space: nowrap;
-  transition:
-    background 0.18s ease,
-    transform 0.18s ease;
-}
-.pdf-btn:hover {
-  background: var(--accent);
-  transform: translateY(-1px);
 }
 .apartments-table th,
 .apartments-table td {

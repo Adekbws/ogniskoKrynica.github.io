@@ -1,0 +1,6 @@
+﻿# Tymczasowa blokada indeksowania — przy oficjalnym starcie SEO zmień na Allow: /
+User-agent: *
+Disallow: /
+
+# Nie dodawaj sitemap w Google Search Console do czasu startu SEO:
+# Sitemap: https://apartamentyognisko.pl/sitemap.xml

@@ -6,6 +6,9 @@ mb_internal_encoding('UTF-8');
 const CONTACT_TO = 'kontakt@apartamentyognisko.pl';
 const CONTACT_FROM = 'kontakt@apartamentyognisko.pl';
 const CONTACT_FROM_NAME = 'Apartamenty Ognisko';
+const CARD_MAIL_DIR = __DIR__ . '/assets/karty/materialy_mail';
+const SITE_URL = 'https://apartamentyognisko.pl/';
+const PRIVACY_URL = 'https://apartamentyognisko.pl/polityka-prywatnosci/';
 const MIN_SUBMIT_SECONDS = 3;
 const MAX_SUBMIT_SECONDS = 7200;
 const RATE_LIMIT_MAX = 5;
@@ -26,6 +29,7 @@ function userMessage(string $code, bool $ok = false): string
         'email' => 'Podaj poprawny adres e-mail.',
         'send' => "Wyst\u{0105}pi\u{0142} b\u{0142}\u{0105}d wysy\u{0142}ki. Napisz do nas na kontakt@apartamentyognisko.pl.",
         'apartment' => "Nie uda\u{0142}o si\u{0119} rozpozna\u{0107} numeru lokalu. Spr\u{00F3}buj ponownie.",
+        'card_file' => "Nie uda\u{0142}o si\u{0119} przygotowa\u{0107} karty lokalu. Napisz do nas na kontakt@apartamentyognisko.pl.",
     ];
 
     return $messages[$code] ?? "Nie uda\u{0142}o si\u{0119} wys\u{0142}a\u{0107} formularza. Spr\u{00F3}buj ponownie.";
@@ -115,6 +119,210 @@ function rateLimitExceeded(string $ip): bool
     return false;
 }
 
+function normalizeApartmentNumber(string $apartment): ?int
+{
+    if (!preg_match('/\d+/', $apartment, $matches)) {
+        return null;
+    }
+
+    $number = (int) $matches[0];
+
+    if ($number < 1 || $number > 22) {
+        return null;
+    }
+
+    return $number;
+}
+
+function findCardMailPdf(int $apartmentNo): ?string
+{
+    $suffix = '-LU' . $apartmentNo . '.pdf';
+    $matches = glob(CARD_MAIL_DIR . '/*' . $suffix) ?: [];
+
+    foreach ($matches as $path) {
+        if (is_file($path)) {
+            return $path;
+        }
+    }
+
+    return null;
+}
+
+function encodeMailSubject(string $subject): string
+{
+    return '=?UTF-8?B?' . base64_encode($subject) . '?=';
+}
+
+function buildMailHeaders(string $replyTo, ?string $contentType = 'text/plain; charset=UTF-8'): string
+{
+    $headers = [
+        'MIME-Version: 1.0',
+        'From: ' . CONTACT_FROM_NAME . ' <' . CONTACT_FROM . '>',
+        'Reply-To: ' . $replyTo,
+        'X-Mailer: PHP/' . PHP_VERSION,
+    ];
+
+    if ($contentType !== null) {
+        $headers[] = 'Content-Type: ' . $contentType;
+    }
+
+    return implode("\r\n", $headers);
+}
+
+function sendPlainMail(string $to, string $subject, string $body, string $replyTo): bool
+{
+    return mail(
+        $to,
+        encodeMailSubject($subject),
+        $body,
+        buildMailHeaders($replyTo)
+    );
+}
+
+function buildCardMailPlainBody(): string
+{
+    return implode("\n", [
+        "Dzie\u{0144} dobry,",
+        '',
+        "Dzi\u{0119}kujemy za zainteresowanie nasz\u{0105} inwestycj\u{0105} w Krynicy-Zdroju.",
+        '',
+        "W za\u{0142}\u{0105}czniku przesy\u{0142}amy kart\u{0119} wybranego lokalu z jego najwa\u{017C}niejszymi informacjami.",
+        '',
+        "Mamy nadziej\u{0119}, \u{017C}e pozwoli ona lepiej pozna\u{0107} wyj\u{0105}tkowy charakter inwestycji. Je\u{015B}li chcieliby Pa\u{0144}stwo uzyska\u{0107} wi\u{0119}cej informacji lub um\u{00F3}wi\u{0107} si\u{0119} na indywidualn\u{0105} prezentacj\u{0119}, pozostajemy do dyspozycji.",
+        '',
+        "Z przyjemno\u{015B}ci\u{0105} odpowiemy na wszystkie pytania i pomo\u{017C}emy wybra\u{0107} lokal najlepiej dopasowany do Pa\u{0144}stwa oczekiwa\u{0144}. W celu dalszych informacji, prosimy o odpowied\u{017A} na tego e-maila.",
+        '',
+        'Serdecznie pozdrawiamy,',
+        'Apartamenty Ognisko',
+    ]);
+}
+
+function buildCardMailFooterHtml(): string
+{
+    $text = '#70463a';
+    $bg = '#e4ded1';
+    $border = '#c8c0b4';
+    $link = 'color:' . $text . ';text-decoration:none;';
+
+    $logo = implode('', [
+        '<a href="' . SITE_URL . '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">',
+        '<span style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:30px;font-weight:700;letter-spacing:0.14em;line-height:1.05;color:' . $text . ';">OGNISKO</span>',
+        '<span style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;letter-spacing:0.36em;line-height:1.5;color:' . $text . ';margin-top:5px;">APARTAMENTY</span>',
+        '</a>',
+    ]);
+
+    return implode("\n", [
+        '<table role="presentation" cellpadding="0" cellspacing="0" width="600" style="width:100%;max-width:600px;background-color:' . $bg . ';border-collapse:collapse;">',
+        '<tr>',
+        '<td style="padding:28px 24px 18px;">',
+        '<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">',
+        '<tr>',
+        '<td width="32%" style="vertical-align:middle;border-right:1px solid ' . $border . ';padding-right:20px;">',
+        $logo,
+        '</td>',
+        '<td width="36%" style="vertical-align:top;padding:0 18px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.85;color:' . $text . ';">',
+        '<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">',
+        '<tr><td style="padding:0 10px 0 0;color:' . $text . ';">telefon:</td><td style="font-weight:700;"><a href="tel:+48664663940" style="' . $link . '">+48664663940</a></td></tr>',
+        '<tr><td style="padding:0 10px 0 0;color:' . $text . ';">mail:</td><td style="font-weight:700;"><a href="mailto:kontakt@apartamentyognisko.pl" style="' . $link . '">kontakt@apartamentyognisko.pl</a></td></tr>',
+        '<tr><td style="padding:0 10px 0 0;color:' . $text . ';">www:</td><td style="font-weight:700;"><a href="' . SITE_URL . '" target="_blank" rel="noopener noreferrer" style="' . $link . '">www.apartamentyognisko.pl</a></td></tr>',
+        '</table>',
+        '</td>',
+        '<td width="32%" style="vertical-align:top;text-align:right;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.65;color:' . $text . ';">',
+        '<strong style="font-size:12px;letter-spacing:0.02em;">BOBROWY RESORT &amp; SPA SP. Z O.O.</strong><br />',
+        'Ul. Warszawska 6/32, 15-063 Bia\u{0142}ystok<br />',
+        'NIP: 966217088 REGON: 523757340',
+        '</td>',
+        '</tr>',
+        '</table>',
+        '</td>',
+        '</tr>',
+        '<tr>',
+        '<td style="padding:0 24px 22px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:' . $text . ';">',
+        'Twoje dane s\u{0105} przetwarzane zgodnie z ',
+        '<a href="' . PRIVACY_URL . '" target="_blank" rel="noopener noreferrer" style="color:' . $text . ';font-weight:700;text-decoration:underline;">Polityk\u{0105} Prywatno\u{015B}ci</a>',
+        '</td>',
+        '</tr>',
+        '</table>',
+    ]);
+}
+
+function buildCardMailHtml(): string
+{
+    return implode("\n", [
+        '<!DOCTYPE html>',
+        '<html lang="pl">',
+        '<head><meta charset="UTF-8" /></head>',
+        '<body style="margin:0;padding:0;font-family:Manrope,Arial,sans-serif;font-size:15px;line-height:1.6;color:#3f2f28;">',
+        '<div style="max-width:600px;margin:0 auto;padding:24px 16px;">',
+        '<p style="margin:0 0 16px;">Dzie\u{0144} dobry,</p>',
+        '<p style="margin:0 0 16px;">Dzi\u{0119}kujemy za zainteresowanie nasz\u{0105} inwestycj\u{0105} w Krynicy-Zdroju.</p>',
+        '<p style="margin:0 0 16px;">W za\u{0142}\u{0105}czniku przesy\u{0142}amy kart\u{0119} wybranego lokalu z jego najwa\u{017C}niejszymi informacjami.</p>',
+        '<p style="margin:0 0 16px;">Mamy nadziej\u{0119}, \u{017C}e pozwoli ona lepiej pozna\u{0107} wyj\u{0105}tkowy charakter inwestycji. Je\u{015B}li chcieliby Pa\u{0144}stwo uzyska\u{0107} wi\u{0119}cej informacji lub um\u{00F3}wi\u{0107} si\u{0119} na indywidualn\u{0105} prezentacj\u{0119}, pozostajemy do dyspozycji.</p>',
+        '<p style="margin:0 0 16px;">Z przyjemno\u{015B}ci\u{0105} odpowiemy na wszystkie pytania i pomo\u{017C}emy wybra\u{0107} lokal najlepiej dopasowany do Pa\u{0144}stwa oczekiwa\u{0144}. W celu dalszych informacji, prosimy o odpowied\u{017A} na tego e-maila.</p>',
+        '<p style="margin:0 0 24px;">Serdecznie pozdrawiamy,<br />Apartamenty Ognisko</p>',
+        '<div style="margin:32px 0 0;">' . buildCardMailFooterHtml() . '</div>',
+        '</div>',
+        '</body>',
+        '</html>',
+    ]);
+}
+
+function sendMailWithPdf(
+    string $to,
+    string $subject,
+    string $plainBody,
+    string $replyTo,
+    string $pdfPath,
+    string $attachmentName,
+    ?string $htmlBody = null
+): bool {
+    if (!is_readable($pdfPath)) {
+        return false;
+    }
+
+    $pdfData = file_get_contents($pdfPath);
+    if ($pdfData === false) {
+        return false;
+    }
+
+    $useHtml = $htmlBody !== null && $htmlBody !== '';
+    $mixedBoundary = '=_Mixed_' . bin2hex(random_bytes(8));
+    $headers = buildMailHeaders($replyTo, 'multipart/mixed; boundary="' . $mixedBoundary . '"');
+    $message = '';
+
+    if ($useHtml) {
+        $altBoundary = '=_Alt_' . bin2hex(random_bytes(8));
+
+        $message .= '--' . $mixedBoundary . "\r\n";
+        $message .= 'Content-Type: multipart/alternative; boundary="' . $altBoundary . '"' . "\r\n\r\n";
+
+        $message .= '--' . $altBoundary . "\r\n";
+        $message .= "Content-Type: text/plain; charset=UTF-8\r\n";
+        $message .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
+        $message .= $plainBody . "\r\n\r\n";
+
+        $message .= '--' . $altBoundary . "\r\n";
+        $message .= "Content-Type: text/html; charset=UTF-8\r\n";
+        $message .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
+        $message .= $htmlBody . "\r\n\r\n";
+        $message .= '--' . $altBoundary . "--\r\n\r\n";
+    } else {
+        $message .= '--' . $mixedBoundary . "\r\n";
+        $message .= "Content-Type: text/plain; charset=UTF-8\r\n";
+        $message .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
+        $message .= $plainBody . "\r\n\r\n";
+    }
+
+    $message .= '--' . $mixedBoundary . "\r\n";
+    $message .= 'Content-Type: application/pdf; name="' . $attachmentName . "\"\r\n";
+    $message .= "Content-Transfer-Encoding: base64\r\n";
+    $message .= 'Content-Disposition: attachment; filename="' . $attachmentName . "\"\r\n\r\n";
+    $message .= chunk_split(base64_encode($pdfData)) . "\r\n";
+    $message .= '--' . $mixedBoundary . '--';
+
+    return mail($to, encodeMailSubject($subject), $message, $headers);
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: /', true, 303);
     exit;
@@ -161,50 +369,67 @@ foreach ([$name, $phone, $email, $apartment] as $field) {
 }
 
 if ($formType === 'card') {
-    if ($apartment === '') {
+    $apartmentNo = normalizeApartmentNumber($apartment);
+    if ($apartmentNo === null) {
         respond(false, 'apartment', $redirect);
     }
 
-    $subject = "Pro\u{015B}ba o kart\u{0119} lokalu - Apartamenty Ognisko";
-    $body = implode("\n", [
-        "Nowa pro\u{015B}ba o przes\u{0142}anie karty lokalu.",
+    $pdfPath = findCardMailPdf($apartmentNo);
+    if ($pdfPath === null) {
+        respond(false, 'card_file', $redirect);
+    }
+
+    $attachmentName = 'Apartamenty-Ognisko-lokal-' . $apartmentNo . '.pdf';
+    $userSubject = 'Apartamenty Ognisko - karta Twojego lokalu.';
+    $userBody = buildCardMailPlainBody();
+
+    $sentToUser = sendMailWithPdf(
+        $email,
+        $userSubject,
+        $userBody,
+        CONTACT_FROM,
+        $pdfPath,
+        $attachmentName,
+        buildCardMailHtml()
+    );
+
+    if (!$sentToUser) {
+        respond(false, 'send', $redirect);
+    }
+
+    $notifySubject = "Wys\u{0142}ano kart\u{0119} lokalu {$apartmentNo} - Apartamenty Ognisko";
+    $notifyBody = implode("\n", [
+        "Automatycznie wys\u{0142}ano kart\u{0119} lokalu do zainteresowanego.",
         '',
-        'Lokal: ' . $apartment,
-        'E-mail: ' . $email,
+        'Lokal: ' . $apartmentNo,
+        'E-mail odbiorcy: ' . $email,
+        'Plik: ' . basename($pdfPath),
         '',
         'IP: ' . $ip,
         'Data: ' . date('Y-m-d H:i:s'),
     ]);
-} else {
-    $subject = 'Zapytanie ze strony - Apartamenty Ognisko';
-    $body = implode("\n", [
-        'Nowe zapytanie z formularza kontaktowego.',
-        '',
-        "Imi\u{0119} i nazwisko: " . ($name !== '' ? $name : '(nie podano)'),
-        'Telefon: ' . ($phone !== '' ? $phone : '(nie podano)'),
-        'E-mail: ' . $email,
-        '',
-        'IP: ' . $ip,
-        'Data: ' . date('Y-m-d H:i:s'),
-    ]);
+
+    sendPlainMail(CONTACT_TO, $notifySubject, $notifyBody, $email);
+
+    respond(true, "Dzi\u{0119}kujemy. Karta lokalu zosta\u{0142}a wys\u{0142}ana na podany adres e-mail.");
 }
 
-$headers = implode("\r\n", [
-    'MIME-Version: 1.0',
-    'Content-Type: text/plain; charset=UTF-8',
-    'From: ' . CONTACT_FROM_NAME . ' <' . CONTACT_FROM . '>',
-    'Reply-To: ' . $email,
-    'X-Mailer: PHP/' . PHP_VERSION,
+$subject = 'Zapytanie ze strony - Apartamenty Ognisko';
+$body = implode("\n", [
+    'Nowe zapytanie z formularza kontaktowego.',
+    '',
+    "Imi\u{0119} i nazwisko: " . ($name !== '' ? $name : '(nie podano)'),
+    'Telefon: ' . ($phone !== '' ? $phone : '(nie podano)'),
+    'E-mail: ' . $email,
+    '',
+    'IP: ' . $ip,
+    'Data: ' . date('Y-m-d H:i:s'),
 ]);
 
-$sent = mail(CONTACT_TO, '=?UTF-8?B?' . base64_encode($subject) . '?=', $body, $headers);
+$sent = sendPlainMail(CONTACT_TO, $subject, $body, $email);
 
 if (!$sent) {
     respond(false, 'send', $redirect);
-}
-
-if ($formType === 'card') {
-    respond(true, "Dzi\u{0119}kujemy. Kart\u{0119} lokalu wy\u{015B}lemy na podany adres e-mail.");
 }
 
 respond(true, "Dzi\u{0119}kujemy za wiadomo\u{015B}\u{0107}. Odezwiemy si\u{0119} wkr\u{00F3}tce.", $redirect);

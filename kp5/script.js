@@ -9,6 +9,8 @@
     email: "Podaj poprawny adres e-mail.",
     send: "Wystąpił błąd wysyłki. Napisz do nas na kontakt@apartamentyognisko.pl.",
     apartment: "Nie udało się rozpoznać numeru lokalu. Spróbuj ponownie.",
+    card_file:
+      "Nie udało się przygotować karty lokalu. Napisz do nas na kontakt@apartamentyognisko.pl.",
   };
 
   document.querySelectorAll(".nav-cta--menu").forEach((link) => {
@@ -236,7 +238,7 @@
       }
       requestNote.textContent =
         result.message ||
-        `Dziękujemy. Kartę lokalu wyślemy na ${email}.`;
+        `Dziękujemy. Karta lokalu została wysłana na ${email}.`;
       requestForm.reset();
       document.querySelectorAll(FORM_TS_SELECTOR).forEach((input) => {
         input.value = formTimestamp;
