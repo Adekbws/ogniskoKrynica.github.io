@@ -17,37 +17,128 @@
     link.href = `tel:${CONTACT_PHONE}`;
   });
 
+  document.querySelectorAll(".apt-link").forEach((link) => {
+    const label = link.getAttribute("aria-label") || link.dataset.apt || "";
+    if (!label) return;
+    link.setAttribute("aria-label", `Wybierz lokal ${label}`);
+    if (link.querySelector("title")) return;
+    const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+    title.textContent = `Lokal ${label}`;
+    link.insertBefore(title, link.firstChild);
+  });
+
   const formTimestamp = String(Math.floor(Date.now() / 1000));
   document.querySelectorAll(FORM_TS_SELECTOR).forEach((input) => {
     input.value = formTimestamp;
   });
 
-  function showContactFormStatus() {
-    const params = new URLSearchParams(window.location.search);
-    const statusNode = document.querySelector(FORM_STATUS_SELECTOR);
-    if (!statusNode) return;
-
-    if (params.get("sent") === "1") {
-      statusNode.hidden = false;
-      statusNode.textContent =
-        "Dziękujemy za wiadomość. Odezwiemy się wkrótce.";
-      statusNode.classList.add("is-success");
-      statusNode.classList.remove("is-error");
-      return;
-    }
-
-    const errorCode = params.get("error");
-    if (!errorCode) return;
-
-    statusNode.hidden = false;
-    statusNode.textContent =
-      FORM_ERROR_MESSAGES[errorCode] ||
-      "Nie udało się wysłać formularza. Spróbuj ponownie.";
-    statusNode.classList.add("is-error");
-    statusNode.classList.remove("is-success");
+  function getMaxScrollTop() {
+    return Math.max(
+      0,
+      Math.max(
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight,
+      ) - window.innerHeight,
+    );
   }
 
-  showContactFormStatus();
+  function setContactFormStatus(message, isError = false) {
+    const statusNode = document.querySelector(FORM_STATUS_SELECTOR);
+    if (!statusNode) return;
+    statusNode.hidden = false;
+    statusNode.textContent = message;
+    statusNode.classList.toggle("is-success", !isError);
+    statusNode.classList.toggle("is-error", isError);
+  }
+
+  function scrollToFormFeedback() {
+    const statusNode = document.querySelector(FORM_STATUS_SELECTOR);
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+
+    const scroll = () => {
+      if (statusNode && !statusNode.hidden) {
+        statusNode.scrollIntoView({ block: "end", inline: "nearest" });
+        return;
+      }
+      document
+        .getElementById("kontakt")
+        ?.scrollIntoView({ block: "end", inline: "nearest" });
+    };
+
+    scroll();
+    requestAnimationFrame(() => requestAnimationFrame(scroll));
+    setTimeout(() => {
+      scroll();
+      root.style.scrollBehavior = previousScrollBehavior;
+    }, 50);
+  }
+
+  function scheduleContactScroll() {
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+
+    const scroll = () => {
+      scrollToFormFeedback();
+      window.scrollTo({ top: getMaxScrollTop(), left: 0, behavior: "auto" });
+    };
+
+    scroll();
+
+    const resizeObserver = new ResizeObserver(scroll);
+    resizeObserver.observe(root);
+    if (document.body) {
+      resizeObserver.observe(document.body);
+    }
+
+    document.querySelectorAll("img").forEach((image) => {
+      if (!image.complete) {
+        image.addEventListener("load", scroll, { once: true });
+        image.addEventListener("error", scroll, { once: true });
+      }
+    });
+
+    window.addEventListener("load", scroll, { once: true });
+    document.fonts?.ready?.then(scroll);
+    [100, 400, 1000, 2500].forEach((delay) => setTimeout(scroll, delay));
+
+    setTimeout(() => {
+      resizeObserver.disconnect();
+      root.style.scrollBehavior = previousScrollBehavior;
+      scroll();
+    }, 4000);
+  }
+
+  function showContactFormStatus() {
+    const params = new URLSearchParams(window.location.search);
+    const sent = params.get("sent") === "1";
+    const errorCode = params.get("error");
+    if (!sent && !errorCode) return false;
+
+    if (sent) {
+      setContactFormStatus(
+        "Dziękujemy za wiadomość. Odezwiemy się wkrótce.",
+      );
+    } else {
+      setContactFormStatus(
+        FORM_ERROR_MESSAGES[errorCode] ||
+          "Nie udało się wysłać formularza. Spróbuj ponownie.",
+        true,
+      );
+    }
+
+    params.delete("sent");
+    params.delete("error");
+    const query = params.toString();
+    const cleanUrl =
+      window.location.pathname + (query ? `?${query}` : "");
+    window.history.replaceState(null, "", cleanUrl);
+    return true;
+  }
+
+  const contactStatusShown = showContactFormStatus();
 
   const nav = document.querySelector(".nav");
   const toggle = document.querySelector(".nav-toggle");
@@ -136,6 +227,12 @@
 
     areaCell.insertAdjacentElement("afterend", cell);
   });
+
+  if (contactStatusShown) {
+    scheduleContactScroll();
+  } else if (window.location.hash === "#kontakt") {
+    scrollToFormFeedback();
+  }
 
   const rows = document.querySelectorAll(".apartments-table tbody tr");
   const cardModal = document.querySelector("#card-modal");
@@ -254,6 +351,58 @@
   );
   openRequestBtn?.addEventListener("click", () => setRequestPanel(true));
   backToPreviewBtn?.addEventListener("click", () => setRequestPanel(false));
+
+  document.querySelectorAll(".contact-form").forEach((form) => {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const submitButton = form.querySelector('button[type="submit"]');
+      const statusNode = form.querySelector(FORM_STATUS_SELECTOR);
+      submitButton?.setAttribute("disabled", "true");
+      if (statusNode) {
+        statusNode.hidden = true;
+      }
+
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+          },
+          body: new FormData(form),
+        });
+        const result = await response.json();
+        if (!response.ok || !result?.ok) {
+          setContactFormStatus(
+            result?.message ||
+              "Nie udało się wysłać formularza. Spróbuj ponownie.",
+            true,
+          );
+          scrollToFormFeedback();
+          return;
+        }
+
+        setContactFormStatus(
+          result.message ||
+            "Dziękujemy za wiadomość. Odezwiemy się wkrótce.",
+        );
+        form.reset();
+        form.querySelectorAll(FORM_TS_SELECTOR).forEach((input) => {
+          input.value = formTimestamp;
+        });
+        scrollToFormFeedback();
+      } catch {
+        setContactFormStatus(
+          "Nie udało się wysłać formularza. Spróbuj ponownie.",
+          true,
+        );
+        scrollToFormFeedback();
+      } finally {
+        submitButton?.removeAttribute("disabled");
+      }
+    });
+  });
+
   requestForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const email = requestEmailInput?.value?.trim();

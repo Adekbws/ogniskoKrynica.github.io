@@ -60,7 +60,7 @@ function respond(bool $ok, string $message, ?string $redirect = null): void
     }
     $separator = str_contains($target, '?') ? '&' : '?';
     $param = $ok ? 'sent=1' : 'error=' . rawurlencode($message);
-    header('Location: ' . $target . $separator . $param . '#kontakt', true, 303);
+    header('Location: ' . $target . $separator . $param, true, 303);
     exit;
 }
 

@@ -43,6 +43,20 @@ picture {
 .gallery-strip picture {
   width: 100%;
 }
+.map-canvas picture {
+  display: contents;
+}
+.image-story,
+.interiors,
+.location,
+.intro,
+.selector,
+.investment,
+.contact,
+.site-footer {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
 .nav {
   position: fixed;
   z-index: 20;

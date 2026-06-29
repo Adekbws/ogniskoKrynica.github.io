@@ -49,6 +49,9 @@
     <link rel="apple-touch-icon" href="assets/ognisko_logo_plomien_small.png" />
     <meta name="theme-color" content="#191411" />
     <link rel="manifest" href="manifest.webmanifest" />
+    <style>
+      :root{--bg:#e4dfd2;--paper:#fffaf1;--primary:#704639;--accent:#873400;--muted:#7d6f65;--dark:#191411;--max:1500px}*,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--dark);font-family:Manrope,system-ui,sans-serif}a{text-decoration:none;color:inherit}img,picture{display:block;max-width:100%}.nav{position:fixed;z-index:20;top:22px;left:50%;transform:translateX(-50%);width:min(calc(100% - 40px),var(--max));height:76px;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:rgba(34,24,20,.54);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-between;padding:0 18px 0 26px;color:#fff}.brand{display:flex;align-items:center;margin-right:20px}.brand-mark{height:48px;max-width:200px;object-fit:contain}.nav nav{display:flex;gap:32px;font-size:14px}.nav-cta,.btn{border-radius:999px;font-weight:800}.nav-cta{background:#fff;color:var(--primary);padding:14px 22px}.nav-cta--menu{display:none}.nav-toggle,.nav-backdrop{display:none}.lang-switch{display:flex;gap:6px;align-items:center;margin-left:12px}.lang-switch a,.lang-switch-soon{display:grid;place-items:center;width:36px;height:36px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);font-size:18px}.hero{position:relative;min-height:100vh;display:flex;align-items:flex-end;overflow:hidden;color:#fff;padding:0}.hero picture,.hero-img{position:absolute;inset:0;width:100%;height:100%}.hero-img{object-fit:cover;z-index:0}.hero-shade{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(19,14,11,.78) 0%,rgba(19,14,11,.45) 42%,rgba(19,14,11,.08) 100%),linear-gradient(0deg,rgba(19,14,11,.8) 0%,rgba(19,14,11,0) 55%)}.hero-content{position:relative;z-index:2;width:min(1096px,calc(100% - 48px));margin:0 auto 110px;transform:translateX(-18%)}.eyebrow{margin:0 0 18px;text-transform:uppercase;letter-spacing:.22em;font-size:12px;font-weight:800;color:#f3d0b7}.hero-eyebrow{color:#f0c36c}h1,h2{font-family:"Gill Sans Medium","Gill Sans","Gill Sans MT",Playfair Display,serif;line-height:.98;margin:0}h1{font-size:clamp(38px,5.46vw,87px);letter-spacing:-.055em;max-width:940px}.hero-content p:not(.eyebrow){max-width:620px;margin:24px 0 0;font-size:clamp(20px,2.2vw,31px);line-height:1.28;color:rgba(255,255,255,.84)}.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}.btn{padding:18px 26px;display:inline-flex}.btn.primary{background:#fff;color:var(--primary)}.btn.ghost{border:1px solid rgba(255,255,255,.42)}.finish-widget{position:absolute;right:52px;bottom:54px;z-index:3;width:min(320px,calc(100% - 40px));padding:22px;border-radius:24px;background:rgba(255,253,250,.88);color:var(--dark);box-shadow:0 24px 60px rgba(0,0,0,.22)}.finish-widget strong{display:block;font-size:20px;line-height:1.1}.finish-widget span{display:block;margin-top:8px;color:var(--muted)}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:1100px){.hero-content{transform:none}.finish-widget{left:24px;right:auto;bottom:28px}}@media(max-width:900px){body{overflow-x:clip}.nav{top:max(12px,env(safe-area-inset-top));width:min(calc(100% - 24px),var(--max));min-height:60px;height:auto;padding:8px 12px 8px 16px;gap:8px}.brand{margin-right:auto;min-width:0}.brand-mark{height:38px;max-width:min(168px,42vw)}.nav-toggle{display:flex;flex-direction:column;justify-content:center;gap:5px;width:42px;height:42px;padding:0;border:1px solid rgba(255,255,255,.28);border-radius:50%;background:rgba(255,255,255,.1);cursor:pointer;flex-shrink:0}.nav-toggle-bar{display:block;width:16px;height:2px;margin:0 auto;border-radius:2px;background:#fff}.nav-cta--desktop{display:none}.hero{min-height:100svh;flex-direction:column;justify-content:flex-end;padding-bottom:max(20px,env(safe-area-inset-bottom))}.hero-img{object-position:70% 42%}.hero-shade{background:linear-gradient(180deg,rgba(19,14,11,.35) 0%,rgba(19,14,11,.55) 45%,rgba(19,14,11,.92) 100%)}.hero-content{width:calc(100% - 32px);margin:0 16px 20px;transform:none}.hero-content p:not(.eyebrow){font-size:clamp(16px,4.2vw,20px);margin-top:16px}.hero-actions{flex-direction:column;margin-top:24px}.hero-actions .btn{width:100%;justify-content:center;padding:16px 22px}.finish-widget{position:relative;left:auto;right:auto;bottom:auto;width:calc(100% - 32px);margin:0 16px 16px;order:1}}
+    </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -63,8 +66,8 @@
         rel="stylesheet"
       />
     </noscript>
-    <link rel="preload" href="style.css" as="style" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="preload" href="style.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="style.css" /></noscript>
     <link
       rel="preload"
       as="image"
@@ -132,7 +135,7 @@
   </head>
   <body>
     <header class="nav">
-      <a class="brand" href="/"
+      <a class="brand" href="/" aria-label="Ognisko Apartament — strona główna"
         ><picture
           ><source
             type="image/webp"
@@ -165,7 +168,7 @@
 
       <div class="lang-switch" aria-label="Wybór języka">
         <a href="./" aria-label="Polski" title="Polski" aria-current="page"
-          >🇵🇱</a
+          ><span class="sr-only">Polski</span>🇵🇱</a
         >
         <span
           class="lang-switch-soon"
@@ -508,13 +511,21 @@
               data-floor-panel="0"
             >
               <div class="map-canvas" style="--map-w: 2000; --map-h: 2105">
-                <img
-                  class="map-base"
-                  src="mapa/assets/p0-baza-bez-punktow.png"
-                  alt="Rzut Parter"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <picture>
+                  <source
+                    type="image/webp"
+                    srcset="mapa/assets/p0-baza-bez-punktow.webp"
+                  />
+                  <img
+                    class="map-base"
+                    src="mapa/assets/p0-baza-bez-punktow.png"
+                    alt="Rzut parteru budynku"
+                    width="2000"
+                    height="2105"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <svg
                   class="map-overlay"
                   viewBox="0 0 2000 2105"
@@ -587,14 +598,17 @@
                     ></polygon>
                   </a>
                 </svg>
-                <img
-                  class="map-points"
-                  src="mapa/assets/p0-punkty.png"
-                  alt=""
-                  role="presentation"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <picture>
+                  <source type="image/webp" srcset="mapa/assets/p0-punkty.webp" />
+                  <img
+                    class="map-points"
+                    src="mapa/assets/p0-punkty.png"
+                    alt=""
+                    role="presentation"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
               </div>
             </div>
             <div
@@ -606,13 +620,21 @@
               data-floor-panel="1"
             >
               <div class="map-canvas" style="--map-w: 2000; --map-h: 2105">
-                <img
-                  class="map-base"
-                  src="mapa/assets/p1-baza-bez-punktow.png"
-                  alt="Rzut Piętro I"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <picture>
+                  <source
+                    type="image/webp"
+                    srcset="mapa/assets/p1-baza-bez-punktow.webp"
+                  />
+                  <img
+                    class="map-base"
+                    src="mapa/assets/p1-baza-bez-punktow.png"
+                    alt="Rzut pierwszego piętra"
+                    width="2000"
+                    height="2105"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <svg
                   class="map-overlay"
                   viewBox="0 0 2000 2105"
@@ -685,14 +707,17 @@
                     ></polygon>
                   </a>
                 </svg>
-                <img
-                  class="map-points"
-                  src="mapa/assets/p1-punkty.png"
-                  alt=""
-                  role="presentation"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <picture>
+                  <source type="image/webp" srcset="mapa/assets/p1-punkty.webp" />
+                  <img
+                    class="map-points"
+                    src="mapa/assets/p1-punkty.png"
+                    alt=""
+                    role="presentation"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
               </div>
             </div>
             <div
@@ -704,13 +729,21 @@
               data-floor-panel="2"
             >
               <div class="map-canvas" style="--map-w: 2000; --map-h: 2105">
-                <img
-                  class="map-base"
-                  src="mapa/assets/p2-baza-bez-punktow.png"
-                  alt="Rzut Piętro II"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <picture>
+                  <source
+                    type="image/webp"
+                    srcset="mapa/assets/p2-baza-bez-punktow.webp"
+                  />
+                  <img
+                    class="map-base"
+                    src="mapa/assets/p2-baza-bez-punktow.png"
+                    alt="Rzut drugiego piętra"
+                    width="2000"
+                    height="2105"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <svg
                   class="map-overlay"
                   viewBox="0 0 2000 2105"
@@ -794,14 +827,17 @@
                     ></polygon>
                   </a>
                 </svg>
-                <img
-                  class="map-points"
-                  src="mapa/assets/p2-punkty.png"
-                  alt=""
-                  role="presentation"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <picture>
+                  <source type="image/webp" srcset="mapa/assets/p2-punkty.webp" />
+                  <img
+                    class="map-points"
+                    src="mapa/assets/p2-punkty.png"
+                    alt=""
+                    role="presentation"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
               </div>
             </div>
             <div
@@ -813,13 +849,21 @@
               data-floor-panel="3"
             >
               <div class="map-canvas" style="--map-w: 2000; --map-h: 2105">
-                <img
-                  class="map-base"
-                  src="mapa/assets/p3-baza-bez-punktow.png"
-                  alt="Rzut Piętro III"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <picture>
+                  <source
+                    type="image/webp"
+                    srcset="mapa/assets/p3-baza-bez-punktow.webp"
+                  />
+                  <img
+                    class="map-base"
+                    src="mapa/assets/p3-baza-bez-punktow.png"
+                    alt="Rzut trzeciego piętra"
+                    width="2000"
+                    height="2105"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <svg
                   class="map-overlay"
                   viewBox="0 0 2000 2105"
@@ -859,14 +903,17 @@
                     ></polygon>
                   </a>
                 </svg>
-                <img
-                  class="map-points"
-                  src="mapa/assets/p3-punkty.png"
-                  alt=""
-                  role="presentation"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <picture>
+                  <source type="image/webp" srcset="mapa/assets/p3-punkty.webp" />
+                  <img
+                    class="map-points"
+                    src="mapa/assets/p3-punkty.png"
+                    alt=""
+                    role="presentation"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
               </div>
             </div>
           </div>
