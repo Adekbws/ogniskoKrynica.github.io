@@ -9,6 +9,8 @@ const CONTACT_FROM_NAME = 'Apartamenty Ognisko';
 const CARD_MAIL_DIR = __DIR__ . '/assets/karty/materialy_mail';
 const SITE_URL = 'https://apartamentyognisko.pl/';
 const PRIVACY_URL = 'https://apartamentyognisko.pl/polityka-prywatnosci/';
+const MAIL_LOGO_URL = SITE_URL . 'assets/ognisko_logo_stopka_mailing.png';
+const MAIL_FOOTER_WIDTH = 600;
 const MIN_SUBMIT_SECONDS = 3;
 const MAX_SUBMIT_SECONDS = 7200;
 const RATE_LIMIT_MAX = 5;
@@ -23,16 +25,16 @@ function userMessage(string $code, bool $ok = false): string
     }
 
     $messages = [
-        'spam' => "Nie uda\u{0142}o si\u{0119} wys\u{0142}a\u{0107} formularza. Spr\u{00F3}buj ponownie lub napisz na kontakt@apartamentyognisko.pl.",
-        'timing' => "Formularz wys\u{0142}ano zbyt szybko. Od\u{015B}wie\u{017C} stron\u{0119} i spr\u{00F3}buj ponownie.",
-        'rate' => "Zbyt wiele pr\u{00F3}b w kr\u{00F3}tkim czasie. Spr\u{00F3}buj ponownie za chwil\u{0119}.",
+        'spam' => 'Nie udało się wysłać formularza. Spróbuj ponownie lub napisz na kontakt@apartamentyognisko.pl.',
+        'timing' => 'Formularz wysłano zbyt szybko. Odśwież stronę i spróbuj ponownie.',
+        'rate' => 'Zbyt wiele prób w krótkim czasie. Spróbuj ponownie za chwilę.',
         'email' => 'Podaj poprawny adres e-mail.',
-        'send' => "Wyst\u{0105}pi\u{0142} b\u{0142}\u{0105}d wysy\u{0142}ki. Napisz do nas na kontakt@apartamentyognisko.pl.",
-        'apartment' => "Nie uda\u{0142}o si\u{0119} rozpozna\u{0107} numeru lokalu. Spr\u{00F3}buj ponownie.",
-        'card_file' => "Nie uda\u{0142}o si\u{0119} przygotowa\u{0107} karty lokalu. Napisz do nas na kontakt@apartamentyognisko.pl.",
+        'send' => 'Wystąpił błąd wysyłki. Napisz do nas na kontakt@apartamentyognisko.pl.',
+        'apartment' => 'Nie udało się rozpoznać numeru lokalu. Spróbuj ponownie.',
+        'card_file' => 'Nie udało się przygotować karty lokalu. Napisz do nas na kontakt@apartamentyognisko.pl.',
     ];
 
-    return $messages[$code] ?? "Nie uda\u{0142}o si\u{0119} wys\u{0142}a\u{0107} formularza. Spr\u{00F3}buj ponownie.";
+    return $messages[$code] ?? 'Nie udało się wysłać formularza. Spróbuj ponownie.';
 }
 
 function respond(bool $ok, string $message, ?string $redirect = null): void
@@ -157,9 +159,8 @@ function buildMailHeaders(string $replyTo, ?string $contentType = 'text/plain; c
 {
     $headers = [
         'MIME-Version: 1.0',
-        'From: ' . CONTACT_FROM_NAME . ' <' . CONTACT_FROM . '>',
+        'From: ' . encodeMailSubject(CONTACT_FROM_NAME) . ' <' . CONTACT_FROM . '>',
         'Reply-To: ' . $replyTo,
-        'X-Mailer: PHP/' . PHP_VERSION,
     ];
 
     if ($contentType !== null) {
@@ -182,15 +183,15 @@ function sendPlainMail(string $to, string $subject, string $body, string $replyT
 function buildCardMailPlainBody(): string
 {
     return implode("\n", [
-        "Dzie\u{0144} dobry,",
+        'Dzień dobry,',
         '',
-        "Dzi\u{0119}kujemy za zainteresowanie nasz\u{0105} inwestycj\u{0105} w Krynicy-Zdroju.",
+        'Dziękujemy za zainteresowanie naszą inwestycją w Krynicy-Zdroju.',
         '',
-        "W za\u{0142}\u{0105}czniku przesy\u{0142}amy kart\u{0119} wybranego lokalu z jego najwa\u{017C}niejszymi informacjami.",
+        'W załączniku przesyłamy kartę wybranego lokalu z jego najważniejszymi informacjami.',
         '',
-        "Mamy nadziej\u{0119}, \u{017C}e pozwoli ona lepiej pozna\u{0107} wyj\u{0105}tkowy charakter inwestycji. Je\u{015B}li chcieliby Pa\u{0144}stwo uzyska\u{0107} wi\u{0119}cej informacji lub um\u{00F3}wi\u{0107} si\u{0119} na indywidualn\u{0105} prezentacj\u{0119}, pozostajemy do dyspozycji.",
+        'Mamy nadzieję, że pozwoli ona lepiej poznać wyjątkowy charakter inwestycji. Jeśli chcieliby Państwo uzyskać więcej informacji lub umówić się na indywidualną prezentację, pozostajemy do dyspozycji.',
         '',
-        "Z przyjemno\u{015B}ci\u{0105} odpowiemy na wszystkie pytania i pomo\u{017C}emy wybra\u{0107} lokal najlepiej dopasowany do Pa\u{0144}stwa oczekiwa\u{0144}. W celu dalszych informacji, prosimy o odpowied\u{017A} na tego e-maila.",
+        'Z przyjemnością odpowiemy na wszystkie pytania i pomożemy wybrać lokal najlepiej dopasowany do Państwa oczekiwań. W celu dalszych informacji, prosimy o odpowiedź na tego e-maila.',
         '',
         'Serdecznie pozdrawiamy,',
         'Apartamenty Ognisko',
@@ -202,44 +203,59 @@ function buildCardMailFooterHtml(): string
     $text = '#70463a';
     $bg = '#e4ded1';
     $border = '#c8c0b4';
-    $link = 'color:' . $text . ';text-decoration:none;';
+    $link = 'color:' . $text . ';text-decoration:none;font-weight:700;';
+    $wrap = 'word-break:break-word;overflow-wrap:break-word;';
+    $logoUrl = htmlspecialchars(SITE_URL . 'assets/logo_stopka.png', ENT_QUOTES, 'UTF-8');
+    $footerWidth = MAIL_FOOTER_WIDTH;
+    $padH = 20;
+    $innerWidth = $footerWidth - ($padH * 2);
+    $colLogo = 142;
+    $colLogoCss = 100;
+    $colRight = 418;
+    $logoImgWidth = 118;
 
     $logo = implode('', [
-        '<a href="' . SITE_URL . '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">',
-        '<span style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:30px;font-weight:700;letter-spacing:0.14em;line-height:1.05;color:' . $text . ';">OGNISKO</span>',
-        '<span style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:400;letter-spacing:0.36em;line-height:1.5;color:' . $text . ';margin-top:5px;">APARTAMENTY</span>',
+        '<a href="' . SITE_URL . '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;">',
+        '<img src="' . $logoUrl . '" alt="Apartamenty Ognisko" width="' . $logoImgWidth . '" style="display:block;width:' . $logoImgWidth . 'px;max-width:100%;height:auto;border:0;" />',
         '</a>',
     ]);
 
+    $contactRow = static function (string $label, string $valueHtml): string {
+        return '<tr>'
+            . '<td width="52" style="width:52px;padding:1px 8px 1px 0;text-align:right;font-weight:400;vertical-align:top;white-space:nowrap;">' . $label . '</td>'
+            . '<td style="font-weight:700;vertical-align:top;word-break:break-word;overflow-wrap:break-word;">' . $valueHtml . '</td>'
+            . '</tr>';
+    };
+
     return implode("\n", [
-        '<table role="presentation" cellpadding="0" cellspacing="0" width="600" style="width:100%;max-width:600px;background-color:' . $bg . ';border-collapse:collapse;">',
+        '<table role="presentation" cellpadding="0" cellspacing="0" width="' . $footerWidth . '" align="center" style="width:' . $footerWidth . 'px;max-width:' . $footerWidth . 'px;background-color:' . $bg . ';border-collapse:collapse;table-layout:fixed;margin:0 auto;">',
         '<tr>',
-        '<td style="padding:28px 24px 18px;">',
-        '<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">',
+        '<td style="padding:22px ' . $padH . 'px 16px;">',
+        '<table role="presentation" cellpadding="0" cellspacing="0" width="' . $innerWidth . '" style="width:' . $innerWidth . 'px;border-collapse:collapse;table-layout:fixed;">',
         '<tr>',
-        '<td width="32%" style="vertical-align:middle;border-right:1px solid ' . $border . ';padding-right:20px;">',
+        '<td width="' . $colLogo . '" style="width:' . $colLogoCss . 'px;vertical-align:middle;border-right:1px solid ' . $border . ';padding-right:14px;">',
         $logo,
         '</td>',
-        '<td width="36%" style="vertical-align:top;padding:0 18px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.85;color:' . $text . ';">',
-        '<table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">',
-        '<tr><td style="padding:0 10px 0 0;color:' . $text . ';">telefon:</td><td style="font-weight:700;"><a href="tel:+48664663940" style="' . $link . '">+48664663940</a></td></tr>',
-        '<tr><td style="padding:0 10px 0 0;color:' . $text . ';">mail:</td><td style="font-weight:700;"><a href="mailto:kontakt@apartamentyognisko.pl" style="' . $link . '">kontakt@apartamentyognisko.pl</a></td></tr>',
-        '<tr><td style="padding:0 10px 0 0;color:' . $text . ';">www:</td><td style="font-weight:700;"><a href="' . SITE_URL . '" target="_blank" rel="noopener noreferrer" style="' . $link . '">www.apartamentyognisko.pl</a></td></tr>',
+        '<td width="' . $colRight . '" style="width:' . $colRight . 'px;vertical-align:middle;padding-left:16px;font-family:Arial,Helvetica,sans-serif;color:' . $text . ';">',
+        '<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="width:100%;border-collapse:collapse;font-size:11px;line-height:1.75;">',
+        $contactRow('telefon:', '<a href="tel:+48664663940" style="' . $link . '">+48664663940</a>'),
+        $contactRow('mail:', '<a href="mailto:kontakt@apartamentyognisko.pl" style="' . $link . '">kontakt@apartamentyognisko.pl</a>'),
+        $contactRow('www:', '<a href="' . SITE_URL . '" target="_blank" rel="noopener noreferrer" style="' . $link . '">www.apartamentyognisko.pl</a>'),
         '</table>',
-        '</td>',
-        '<td width="32%" style="vertical-align:top;text-align:right;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.65;color:' . $text . ';">',
-        '<strong style="font-size:12px;letter-spacing:0.02em;">BOBROWY RESORT &amp; SPA SP. Z O.O.</strong><br />',
-        'Ul. Warszawska 6/32, 15-063 Bia\u{0142}ystok<br />',
+        '<div style="margin-top:10px;text-align:right;font-size:10px;line-height:1.55;font-weight:400;' . $wrap . '">',
+        '<strong style="display:block;font-size:11px;font-weight:700;line-height:1.4;margin-bottom:2px;">BOBROWY RESORT &amp; SPA SP. Z O.O.</strong>',
+        'Ul. Warszawska 6/32, 15-063 Białystok<br />',
         'NIP: 966217088 REGON: 523757340',
+        '</div>',
         '</td>',
         '</tr>',
         '</table>',
         '</td>',
         '</tr>',
         '<tr>',
-        '<td style="padding:0 24px 22px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:' . $text . ';">',
-        'Twoje dane s\u{0105} przetwarzane zgodnie z ',
-        '<a href="' . PRIVACY_URL . '" target="_blank" rel="noopener noreferrer" style="color:' . $text . ';font-weight:700;text-decoration:underline;">Polityk\u{0105} Prywatno\u{015B}ci</a>',
+        '<td style="padding:0 ' . $padH . 'px 22px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.5;color:' . $text . ';">',
+        'Twoje dane są przetwarzane zgodnie z ',
+        '<a href="' . PRIVACY_URL . '" target="_blank" rel="noopener noreferrer" style="color:' . $text . ';font-weight:700;text-decoration:underline;">Polityką Prywatności</a>',
         '</td>',
         '</tr>',
         '</table>',
@@ -254,14 +270,14 @@ function buildCardMailHtml(): string
         '<head><meta charset="UTF-8" /></head>',
         '<body style="margin:0;padding:0;font-family:Manrope,Arial,sans-serif;font-size:15px;line-height:1.6;color:#3f2f28;">',
         '<div style="max-width:600px;margin:0 auto;padding:24px 16px;">',
-        '<p style="margin:0 0 16px;">Dzie\u{0144} dobry,</p>',
-        '<p style="margin:0 0 16px;">Dzi\u{0119}kujemy za zainteresowanie nasz\u{0105} inwestycj\u{0105} w Krynicy-Zdroju.</p>',
-        '<p style="margin:0 0 16px;">W za\u{0142}\u{0105}czniku przesy\u{0142}amy kart\u{0119} wybranego lokalu z jego najwa\u{017C}niejszymi informacjami.</p>',
-        '<p style="margin:0 0 16px;">Mamy nadziej\u{0119}, \u{017C}e pozwoli ona lepiej pozna\u{0107} wyj\u{0105}tkowy charakter inwestycji. Je\u{015B}li chcieliby Pa\u{0144}stwo uzyska\u{0107} wi\u{0119}cej informacji lub um\u{00F3}wi\u{0107} si\u{0119} na indywidualn\u{0105} prezentacj\u{0119}, pozostajemy do dyspozycji.</p>',
-        '<p style="margin:0 0 16px;">Z przyjemno\u{015B}ci\u{0105} odpowiemy na wszystkie pytania i pomo\u{017C}emy wybra\u{0107} lokal najlepiej dopasowany do Pa\u{0144}stwa oczekiwa\u{0144}. W celu dalszych informacji, prosimy o odpowied\u{017A} na tego e-maila.</p>',
+        '<p style="margin:0 0 16px;">Dzień dobry,</p>',
+        '<p style="margin:0 0 16px;">Dziękujemy za zainteresowanie naszą inwestycją w Krynicy-Zdroju.</p>',
+        '<p style="margin:0 0 16px;">W załączniku przesyłamy kartę wybranego lokalu z jego najważniejszymi informacjami.</p>',
+        '<p style="margin:0 0 16px;">Mamy nadzieję, że pozwoli ona lepiej poznać wyjątkowy charakter inwestycji. Jeśli chcieliby Państwo uzyskać więcej informacji lub umówić się na indywidualną prezentację, pozostajemy do dyspozycji.</p>',
+        '<p style="margin:0 0 16px;">Z przyjemnością odpowiemy na wszystkie pytania i pomożemy wybrać lokal najlepiej dopasowany do Państwa oczekiwań. W celu dalszych informacji, prosimy o odpowiedź na tego e-maila.</p>',
         '<p style="margin:0 0 24px;">Serdecznie pozdrawiamy,<br />Apartamenty Ognisko</p>',
-        '<div style="margin:32px 0 0;">' . buildCardMailFooterHtml() . '</div>',
         '</div>',
+        buildCardMailFooterHtml(),
         '</body>',
         '</html>',
     ]);
@@ -397,9 +413,9 @@ if ($formType === 'card') {
         respond(false, 'send', $redirect);
     }
 
-    $notifySubject = "Wys\u{0142}ano kart\u{0119} lokalu {$apartmentNo} - Apartamenty Ognisko";
+    $notifySubject = 'Wysłano kartę lokalu ' . $apartmentNo . ' - Apartamenty Ognisko';
     $notifyBody = implode("\n", [
-        "Automatycznie wys\u{0142}ano kart\u{0119} lokalu do zainteresowanego.",
+        'Automatycznie wysłano kartę lokalu do zainteresowanego.',
         '',
         'Lokal: ' . $apartmentNo,
         'E-mail odbiorcy: ' . $email,
@@ -411,14 +427,14 @@ if ($formType === 'card') {
 
     sendPlainMail(CONTACT_TO, $notifySubject, $notifyBody, $email);
 
-    respond(true, "Dzi\u{0119}kujemy. Karta lokalu zosta\u{0142}a wys\u{0142}ana na podany adres e-mail.");
+    respond(true, 'Dziękujemy. Karta lokalu została wysłana na podany adres e-mail.');
 }
 
 $subject = 'Zapytanie ze strony - Apartamenty Ognisko';
 $body = implode("\n", [
     'Nowe zapytanie z formularza kontaktowego.',
     '',
-    "Imi\u{0119} i nazwisko: " . ($name !== '' ? $name : '(nie podano)'),
+    'Imię i nazwisko: ' . ($name !== '' ? $name : '(nie podano)'),
     'Telefon: ' . ($phone !== '' ? $phone : '(nie podano)'),
     'E-mail: ' . $email,
     '',
@@ -432,4 +448,4 @@ if (!$sent) {
     respond(false, 'send', $redirect);
 }
 
-respond(true, "Dzi\u{0119}kujemy za wiadomo\u{015B}\u{0107}. Odezwiemy si\u{0119} wkr\u{00F3}tce.", $redirect);
+respond(true, 'Dziękujemy za wiadomość. Odezwiemy się wkrótce.', $redirect);
