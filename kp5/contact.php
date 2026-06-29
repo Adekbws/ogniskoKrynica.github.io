@@ -9,7 +9,7 @@ const CONTACT_FROM_NAME = 'Apartamenty Ognisko';
 const CARD_MAIL_DIR = __DIR__ . '/assets/karty/materialy_mail';
 const SITE_URL = 'https://apartamentyognisko.pl/';
 const PRIVACY_URL = 'https://apartamentyognisko.pl/polityka-prywatnosci/';
-const MAIL_LOGO_URL = SITE_URL . 'assets/ognisko_logo_stopka_mailing.png';
+const MAIL_LOGO_URL = SITE_URL . 'assets/logo_stopka.png';
 const MAIL_FOOTER_WIDTH = 600;
 const MIN_SUBMIT_SECONDS = 3;
 const MAX_SUBMIT_SECONDS = 7200;
@@ -157,10 +157,14 @@ function encodeMailSubject(string $subject): string
 
 function buildMailHeaders(string $replyTo, ?string $contentType = 'text/plain; charset=UTF-8'): string
 {
+    $serverName = (string) ($_SERVER['SERVER_NAME'] ?? 'apartamentyognisko.pl');
+    $messageIdHost = preg_replace('/[^a-z0-9.\-]/i', '', $serverName) ?: 'apartamentyognisko.pl';
     $headers = [
         'MIME-Version: 1.0',
         'From: ' . encodeMailSubject(CONTACT_FROM_NAME) . ' <' . CONTACT_FROM . '>',
         'Reply-To: ' . $replyTo,
+        'Date: ' . date(DATE_RFC2822),
+        'Message-ID: <' . bin2hex(random_bytes(12)) . '@' . $messageIdHost . '>',
     ];
 
     if ($contentType !== null) {
@@ -170,14 +174,177 @@ function buildMailHeaders(string $replyTo, ?string $contentType = 'text/plain; c
     return implode("\r\n", $headers);
 }
 
+function smtpEnv(string $name): ?string
+{
+    $value = getenv($name);
+    if (is_string($value) && $value !== '') {
+        return $value;
+    }
+
+    if (isset($_SERVER[$name]) && is_string($_SERVER[$name]) && $_SERVER[$name] !== '') {
+        return $_SERVER[$name];
+    }
+
+    if (function_exists('apache_getenv')) {
+        $apacheValue = apache_getenv($name);
+        if (is_string($apacheValue) && $apacheValue !== '') {
+            return $apacheValue;
+        }
+    }
+
+    return null;
+}
+
+function smtpLocalConfig(): ?array
+{
+    static $config = null;
+
+    if ($config !== null) {
+        return $config;
+    }
+
+    $path = __DIR__ . '/mail-config.local.php';
+    if (!is_readable($path)) {
+        return null;
+    }
+
+    $loaded = require $path;
+    $config = is_array($loaded) ? $loaded : null;
+
+    return $config;
+}
+
+function smtpConfig(): array
+{
+    $local = smtpLocalConfig();
+
+    $host = smtpEnv('SMTP_HOST') ?? ($local['host'] ?? null);
+    $port = smtpEnv('SMTP_PORT') ?? (isset($local['port']) ? (string) $local['port'] : null);
+    $user = smtpEnv('SMTP_USER') ?? ($local['user'] ?? null);
+    $pass = smtpEnv('SMTP_PASS') ?? ($local['pass'] ?? null);
+    $secure = smtpEnv('SMTP_SECURE') ?? ($local['secure'] ?? null);
+
+    return [
+        'host' => is_string($host) && $host !== '' ? $host : 'mail86.mydevil.net',
+        'port' => is_string($port) && ctype_digit($port) ? (int) $port : 587,
+        'user' => is_string($user) && $user !== '' ? $user : CONTACT_FROM,
+        'pass' => is_string($pass) ? $pass : '',
+        'secure' => is_string($secure) && $secure !== '' ? strtolower($secure) : 'starttls',
+    ];
+}
+
+function smtpReadResponse($socket): ?string
+{
+    $response = '';
+
+    while (!feof($socket)) {
+        $line = fgets($socket, 515);
+        if ($line === false) {
+            break;
+        }
+        $response .= $line;
+
+        if (strlen($line) >= 4 && $line[3] === ' ') {
+            break;
+        }
+    }
+
+    return $response !== '' ? $response : null;
+}
+
+function smtpExpect($socket, array $okCodes): bool
+{
+    $response = smtpReadResponse($socket);
+    if ($response === null || strlen($response) < 3) {
+        return false;
+    }
+
+    $code = (int) substr($response, 0, 3);
+    return in_array($code, $okCodes, true);
+}
+
+function smtpCommand($socket, string $command, array $okCodes): bool
+{
+    if (fwrite($socket, $command . "\r\n") === false) {
+        return false;
+    }
+
+    return smtpExpect($socket, $okCodes);
+}
+
+function smtpDotStuff(string $message): string
+{
+    $normalized = preg_replace("/\r\n|\r|\n/", "\r\n", $message) ?? $message;
+    return preg_replace('/(?m)^\./', '..', $normalized) ?? $normalized;
+}
+
+function sendViaSmtp(string $to, string $subject, string $body, string $headers): bool
+{
+    $cfg = smtpConfig();
+    if ($cfg['pass'] === '') {
+        return false;
+    }
+
+    $socket = @stream_socket_client(
+        'tcp://' . $cfg['host'] . ':' . (string) $cfg['port'],
+        $errno,
+        $errstr,
+        15
+    );
+
+    if ($socket === false) {
+        return false;
+    }
+
+    stream_set_timeout($socket, 20);
+
+    $helo = (string) ($_SERVER['SERVER_NAME'] ?? 'localhost');
+    if (!smtpExpect($socket, [220])
+        || !smtpCommand($socket, 'EHLO ' . $helo, [250])) {
+        fclose($socket);
+        return false;
+    }
+
+    if ($cfg['secure'] === 'starttls') {
+        if (!smtpCommand($socket, 'STARTTLS', [220])
+            || !stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)
+            || !smtpCommand($socket, 'EHLO ' . $helo, [250])) {
+            fclose($socket);
+            return false;
+        }
+    }
+
+    if (!smtpCommand($socket, 'AUTH LOGIN', [334])
+        || !smtpCommand($socket, base64_encode($cfg['user']), [334])
+        || !smtpCommand($socket, base64_encode($cfg['pass']), [235])
+        || !smtpCommand($socket, 'MAIL FROM:<' . CONTACT_FROM . '>', [250])
+        || !smtpCommand($socket, 'RCPT TO:<' . $to . '>', [250, 251])
+        || !smtpCommand($socket, 'DATA', [354])) {
+        fclose($socket);
+        return false;
+    }
+
+    $data = implode("\r\n", [
+        'To: ' . $to,
+        'Subject: ' . encodeMailSubject($subject),
+        $headers,
+        '',
+        smtpDotStuff($body),
+    ]);
+
+    if (fwrite($socket, $data . "\r\n.\r\n") === false || !smtpExpect($socket, [250])) {
+        fclose($socket);
+        return false;
+    }
+
+    smtpCommand($socket, 'QUIT', [221]);
+    fclose($socket);
+    return true;
+}
+
 function sendPlainMail(string $to, string $subject, string $body, string $replyTo): bool
 {
-    return mail(
-        $to,
-        encodeMailSubject($subject),
-        $body,
-        buildMailHeaders($replyTo)
-    );
+    return sendViaSmtp($to, $subject, $body, buildMailHeaders($replyTo));
 }
 
 function buildCardMailPlainBody(): string
@@ -205,7 +372,7 @@ function buildCardMailFooterHtml(): string
     $border = '#c8c0b4';
     $link = 'color:' . $text . ';text-decoration:none;font-weight:700;';
     $wrap = 'word-break:break-word;overflow-wrap:break-word;';
-    $logoUrl = htmlspecialchars(SITE_URL . 'assets/logo_stopka.png', ENT_QUOTES, 'UTF-8');
+    $logoSrc = htmlspecialchars(MAIL_LOGO_URL, ENT_QUOTES, 'UTF-8');
     $footerWidth = MAIL_FOOTER_WIDTH;
     $padH = 20;
     $innerWidth = $footerWidth - ($padH * 2);
@@ -216,7 +383,7 @@ function buildCardMailFooterHtml(): string
 
     $logo = implode('', [
         '<a href="' . SITE_URL . '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;">',
-        '<img src="' . $logoUrl . '" alt="Apartamenty Ognisko" width="' . $logoImgWidth . '" style="display:block;width:' . $logoImgWidth . 'px;max-width:100%;height:auto;border:0;" />',
+        '<img src="' . $logoSrc . '" alt="Apartamenty Ognisko" width="' . $logoImgWidth . '" style="display:block;width:' . $logoImgWidth . 'px;max-width:100%;height:auto;border:0;" />',
         '</a>',
     ]);
 
@@ -336,7 +503,7 @@ function sendMailWithPdf(
     $message .= chunk_split(base64_encode($pdfData)) . "\r\n";
     $message .= '--' . $mixedBoundary . '--';
 
-    return mail($to, encodeMailSubject($subject), $message, $headers);
+    return sendViaSmtp($to, $subject, $message, $headers);
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

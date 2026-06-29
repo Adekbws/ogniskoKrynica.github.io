@@ -76,9 +76,17 @@
 
   const tabs = document.querySelectorAll(".map-tabs button");
   const panels = document.querySelectorAll(".map-panel");
-  function showFloor(id){
-    tabs.forEach(t => t.classList.toggle("active", t.dataset.floor === id));
-    panels.forEach(p => p.classList.toggle("active", p.dataset.floorPanel === id));
+  function showFloor(id) {
+    tabs.forEach((tab) => {
+      const selected = tab.dataset.floor === id;
+      tab.classList.toggle("active", selected);
+      tab.setAttribute("aria-selected", String(selected));
+    });
+    panels.forEach((panel) => {
+      const selected = panel.dataset.floorPanel === id;
+      panel.classList.toggle("active", selected);
+      panel.hidden = !selected;
+    });
   }
   tabs.forEach(tab => tab.addEventListener("click", () => showFloor(tab.dataset.floor)));
 
@@ -95,11 +103,39 @@
     });
   });
 
-  const tableHeadRow = document.querySelector(".apartments-table thead tr");
-  tableHeadRow?.children[5]?.remove();
-  document
-    .querySelectorAll(".apartments-table tbody tr")
-    .forEach((row) => row.children[5]?.remove());
+  function parsePolishArea(text) {
+    const match = String(text).match(/([\d,.]+)/);
+    if (!match) return NaN;
+    return parseFloat(match[1].replace(",", "."));
+  }
+
+  function parsePolishPrice(text) {
+    const match = String(text).match(/([\d\s]+)/);
+    if (!match) return NaN;
+    return parseInt(match[1].replace(/\s/g, ""), 10);
+  }
+
+  function formatPricePerM2(value) {
+    return `${Math.round(value).toLocaleString("pl-PL")} zł/m²`;
+  }
+
+  document.querySelectorAll(".apartments-table tbody tr").forEach((row) => {
+    const areaCell = row.children[2];
+    const priceCell = row.children[3];
+    if (!areaCell || !priceCell) return;
+
+    const area = parsePolishArea(areaCell.textContent);
+    const price = parsePolishPrice(priceCell.textContent);
+    const cell = document.createElement("td");
+
+    if (area > 0 && Number.isFinite(price)) {
+      cell.textContent = formatPricePerM2(price / area);
+    } else {
+      cell.textContent = "—";
+    }
+
+    areaCell.insertAdjacentElement("afterend", cell);
+  });
 
   const rows = document.querySelectorAll(".apartments-table tbody tr");
   const cardModal = document.querySelector("#card-modal");
@@ -186,7 +222,12 @@
     row.dataset.apartmentId = apartmentId;
     row.tabIndex = 0;
     row.setAttribute("role", "button");
-    row.setAttribute("aria-label", "Otwórz kartę lokalu");
+    row.setAttribute(
+      "aria-label",
+      apartmentNo
+        ? `Otwórz kartę lokalu ${apartmentNo}`
+        : "Otwórz kartę lokalu",
+    );
     row.addEventListener("click", () => openCardModal(row));
     row.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {

@@ -47,13 +47,33 @@
       type="image/png"
     />
     <link rel="apple-touch-icon" href="assets/ognisko_logo_plomien_small.png" />
+    <meta name="theme-color" content="#191411" />
+    <link rel="manifest" href="manifest.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
+      rel="preload"
+      as="style"
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
-      rel="stylesheet"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+    <link rel="preload" href="style.css" as="style" />
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      href="assets/baner_0-828.webp"
+      imagesrcset="assets/baner_0-828.webp 828w, assets/baner_0-1280.webp 1280w, assets/baner_0.webp 1675w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -113,13 +133,18 @@
   <body>
     <header class="nav">
       <a class="brand" href="/"
-        ><img
-          class="brand-mark"
-          src="assets/ognisko_logo_plomien_napis_small.png?v=2"
-          alt="Ognisko Apartament"
-          width="160"
-          height="48"
-      /></a>
+        ><picture
+          ><source
+            type="image/webp"
+            srcset="assets/ognisko_logo_plomien_napis_small-160.webp" />
+          <img
+            class="brand-mark"
+            src="assets/ognisko_logo_plomien_napis_small.png?v=2"
+            alt="Ognisko Apartament"
+            width="160"
+            height="48"
+            decoding="async" /></picture
+      ></a>
       <button
         class="nav-toggle"
         type="button"
@@ -155,14 +180,26 @@
 
     <main>
       <section class="hero">
-        <img
-          src="assets/baner_0.png"
-          alt="Apartamenty Ognisko w otoczeniu gór i lasów"
-          class="hero-img"
-          fetchpriority="high"
-          width="1920"
-          height="1080"
-        />
+        <picture>
+          <source
+            type="image/webp"
+            srcset="
+              assets/baner_0-828.webp   828w,
+              assets/baner_0-1280.webp 1280w,
+              assets/baner_0.webp      1675w
+            "
+            sizes="100vw"
+          />
+          <img
+            src="assets/baner_0.png"
+            alt="Apartamenty Ognisko w otoczeniu gór i lasów"
+            class="hero-img"
+            fetchpriority="high"
+            decoding="async"
+            width="1675"
+            height="939"
+          />
+        </picture>
         <div class="hero-shade"></div>
         <div class="hero-content">
           <p class="eyebrow hero-eyebrow">Krynica-Zdrój · ul. Leśna 34</p>
@@ -184,12 +221,24 @@
 
       <section class="image-story">
         <div class="story-img">
-          <img
-            src="assets/building.jpg"
-            alt="Wizualizacja budynku Ognisko Apartamenty"
-            loading="lazy"
-            decoding="async"
-          />
+          <picture>
+            <source
+              type="image/webp"
+              srcset="
+                assets/building-800.webp  800w,
+                assets/building-1200.webp 1200w
+              "
+              sizes="(max-width: 900px) 100vw, 60vw"
+            />
+            <img
+              src="assets/building.jpg"
+              alt="Wizualizacja budynku Ognisko Apartamenty"
+              width="1800"
+              height="1344"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
         </div>
         <div class="story-copy">
           <h2>Historyczna bryła z nowoczesnym wnętrzem</h2>
@@ -198,6 +247,133 @@
             Beskidu Sądeckiego, w niewielkiej odległości od centrum, atrakcji
             uzdrowiskowych i infrastruktury narciarskiej Krynicy - Zdroju.
           </p>
+        </div>
+      </section>
+
+      <section class="interiors">
+        <div class="section-head">
+          <h2>Premium bez ciężkiego luksusu</h2>
+          <p>
+            Jasne beże, kamień, drewno i spokojna typografia. To kierunek, który
+            dobrze pasuje do miejsca i nie gryzie się z charakterem Krynicy.
+          </p>
+        </div>
+        <div class="gallery-mosaic">
+          <picture>
+            <source
+              type="image/webp"
+              srcset="
+                assets/hall2-800.webp  800w,
+                assets/hall2-1200.webp 1200w
+              "
+              sizes="(max-width: 900px) 100vw, 50vw"
+            />
+            <img
+              class="big"
+              src="assets/hall2.jpg"
+              alt="Wizualizacja klatki schodowej"
+              width="1645"
+              height="1265"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <picture>
+            <source
+              type="image/webp"
+              srcset="
+                assets/hall1-800.webp  800w,
+                assets/hall1-1200.webp 1200w
+              "
+              sizes="(max-width: 900px) 100vw, 50vw"
+            />
+            <img
+              class="big"
+              src="assets/hall1.jpg"
+              alt="Wizualizacja korytarza"
+              width="1783"
+              height="1265"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+        </div>
+        <div class="gallery-strip">
+          <picture>
+            <source
+              type="image/webp"
+              srcset="assets/lokaleglowna/M1_2b.webp"
+            />
+            <img
+              src="assets/lokaleglowna/M1_2b.jpg"
+              alt="Wizualizacja lokalu M1_2"
+              width="300"
+              height="197"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <picture>
+            <source type="image/webp" srcset="assets/lokaleglowna/M2.webp" />
+            <img
+              src="assets/lokaleglowna/M2.jpg"
+              alt="Wizualizacja lokalu M2"
+              width="300"
+              height="197"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <picture>
+            <source type="image/webp" srcset="assets/lokaleglowna/M3_1.webp" />
+            <img
+              src="assets/lokaleglowna/M3_1.jpg"
+              alt="Wizualizacja lokalu M3_1"
+              width="300"
+              height="323"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <picture>
+            <source type="image/webp" srcset="assets/lokaleglowna/m5_1.webp" />
+            <img
+              src="assets/lokaleglowna/m5_1.jpg"
+              alt="Wizualizacja lokalu M5_1"
+              width="300"
+              height="231"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <picture>
+            <source
+              type="image/webp"
+              srcset="assets/lokaleglowna/Lokal 14 (3).webp"
+            />
+            <img
+              src="assets/lokaleglowna/Lokal 14 (3).jpg"
+              alt="Wizualizacja lokalu 14, ujęcie 3"
+              width="300"
+              height="192"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+          <picture>
+            <source
+              type="image/webp"
+              srcset="assets/lokaleglowna/Lokal 14 (6).webp"
+            />
+            <img
+              src="assets/lokaleglowna/Lokal 14 (6).jpg"
+              alt="Wizualizacja lokalu 14, ujęcie 6"
+              width="300"
+              height="169"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
         </div>
       </section>
 
@@ -277,14 +453,60 @@
           </div>
         </div>
         <div class="real-map-module">
-          <div class="floor-tabs map-tabs">
-            <button class="active" type="button" data-floor="0">Parter</button>
-            <button class="" type="button" data-floor="1">Piętro I</button>
-            <button class="" type="button" data-floor="2">Piętro II</button>
-            <button class="" type="button" data-floor="3">Piętro III</button>
+          <div class="floor-tabs map-tabs" role="tablist" aria-label="Wybór piętra">
+            <button
+              class="active"
+              type="button"
+              role="tab"
+              id="floor-tab-0"
+              aria-selected="true"
+              aria-controls="floor-panel-0"
+              data-floor="0"
+            >
+              Parter
+            </button>
+            <button
+              class=""
+              type="button"
+              role="tab"
+              id="floor-tab-1"
+              aria-selected="false"
+              aria-controls="floor-panel-1"
+              data-floor="1"
+            >
+              Piętro I
+            </button>
+            <button
+              class=""
+              type="button"
+              role="tab"
+              id="floor-tab-2"
+              aria-selected="false"
+              aria-controls="floor-panel-2"
+              data-floor="2"
+            >
+              Piętro II
+            </button>
+            <button
+              class=""
+              type="button"
+              role="tab"
+              id="floor-tab-3"
+              aria-selected="false"
+              aria-controls="floor-panel-3"
+              data-floor="3"
+            >
+              Piętro III
+            </button>
           </div>
           <div class="map-panels">
-            <div class="map-panel active" data-floor-panel="0">
+            <div
+              class="map-panel active"
+              id="floor-panel-0"
+              role="tabpanel"
+              aria-labelledby="floor-tab-0"
+              data-floor-panel="0"
+            >
               <div class="map-canvas" style="--map-w: 2000; --map-h: 2105">
                 <img
                   class="map-base"
@@ -369,11 +591,20 @@
                   class="map-points"
                   src="mapa/assets/p0-punkty.png"
                   alt=""
-                  aria-hidden="true"
+                  role="presentation"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>
-            <div class="map-panel" data-floor-panel="1">
+            <div
+              class="map-panel"
+              id="floor-panel-1"
+              role="tabpanel"
+              aria-labelledby="floor-tab-1"
+              hidden
+              data-floor-panel="1"
+            >
               <div class="map-canvas" style="--map-w: 2000; --map-h: 2105">
                 <img
                   class="map-base"
@@ -458,11 +689,20 @@
                   class="map-points"
                   src="mapa/assets/p1-punkty.png"
                   alt=""
-                  aria-hidden="true"
+                  role="presentation"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>
-            <div class="map-panel" data-floor-panel="2">
+            <div
+              class="map-panel"
+              id="floor-panel-2"
+              role="tabpanel"
+              aria-labelledby="floor-tab-2"
+              hidden
+              data-floor-panel="2"
+            >
               <div class="map-canvas" style="--map-w: 2000; --map-h: 2105">
                 <img
                   class="map-base"
@@ -558,11 +798,20 @@
                   class="map-points"
                   src="mapa/assets/p2-punkty.png"
                   alt=""
-                  aria-hidden="true"
+                  role="presentation"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>
-            <div class="map-panel" data-floor-panel="3">
+            <div
+              class="map-panel"
+              id="floor-panel-3"
+              role="tabpanel"
+              aria-labelledby="floor-tab-3"
+              hidden
+              data-floor-panel="3"
+            >
               <div class="map-canvas" style="--map-w: 2000; --map-h: 2105">
                 <img
                   class="map-base"
@@ -614,7 +863,9 @@
                   class="map-points"
                   src="mapa/assets/p3-punkty.png"
                   alt=""
-                  aria-hidden="true"
+                  role="presentation"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>
@@ -638,6 +889,10 @@
                   <th>
                     <span class="label-desktop">metraż</span
                     ><span class="label-mobile">m²</span>
+                  </th>
+                  <th>
+                    <span class="label-desktop">cena za m2</span
+                    ><span class="label-mobile">zł/m²</span>
                   </th>
                   <th>cena</th>
                   <th class="col-status">
@@ -939,70 +1194,6 @@
         </div>
       </section>
 
-      <section class="interiors">
-        <div class="section-head">
-          <h2>Premium bez ciężkiego luksusu</h2>
-          <p>
-            Jasne beże, kamień, drewno i spokojna typografia. To kierunek, który
-            dobrze pasuje do miejsca i nie gryzie się z charakterem Krynicy.
-          </p>
-        </div>
-        <div class="gallery-mosaic">
-          <img
-            class="big"
-            src="assets/hall2.jpg"
-            alt="Wizualizacja klatki schodowej"
-            loading="lazy"
-            decoding="async"
-          />
-          <img
-            class="big"
-            src="assets/hall1.jpg"
-            alt="Wizualizacja korytarza"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div class="gallery-strip">
-          <img
-            src="assets/lokaleglowna/M1_2b.jpg"
-            alt="Wizualizacja lokalu M1_2"
-            loading="lazy"
-            decoding="async"
-          />
-          <img
-            src="assets/lokaleglowna/M2.jpg"
-            alt="Wizualizacja lokalu M2"
-            loading="lazy"
-            decoding="async"
-          />
-          <img
-            src="assets/lokaleglowna/M3_1.jpg"
-            alt="Wizualizacja lokalu M3_1"
-            loading="lazy"
-            decoding="async"
-          />
-          <img
-            src="assets/lokaleglowna/m5_1.jpg"
-            alt="Wizualizacja lokalu M5_1"
-            loading="lazy"
-            decoding="async"
-          />
-          <img
-            src="assets/lokaleglowna/Lokal 14 (3).jpg"
-            alt="Wizualizacja lokalu 14, ujęcie 3"
-            loading="lazy"
-            decoding="async"
-          />
-          <img
-            src="assets/lokaleglowna/Lokal 14 (6).jpg"
-            alt="Wizualizacja lokalu 14, ujęcie 6"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-      </section>
-
       <section class="investment">
         <div class="section-head">
           <h2>Pewna lokata kapitału w sercu uzdrowiska</h2>
@@ -1197,6 +1388,6 @@
         </div>
       </div>
     </main>
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
   </body>
 </html>
