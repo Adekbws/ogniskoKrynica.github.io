@@ -287,10 +287,14 @@ h3 {
 }
 .section-head {
   max-width: 900px;
+  margin-inline: auto;
   margin-bottom: var(--section-head-gap);
 }
 .section-head.wide {
   max-width: 1150px;
+}
+.finish-page .section-head.wide {
+  max-width: min(1485px, 100%);
 }
 .section-head p:not(.eyebrow),
 .story-copy p,
@@ -1134,11 +1138,12 @@ form button:hover {
 .hero-content h1 {
   max-width: 940px;
   letter-spacing: 0.01em;
+  font-size: clamp(30.4px, 4.37vw, 69.6px);
 }
 .hero-content p:not(.eyebrow):not(.lead) {
   max-width: 620px;
   margin: 24px 0 0;
-  font-size: clamp(20px, 2.2vw, 31px);
+  font-size: clamp(14px, 1.54vw, 21.7px);
   line-height: 1.28;
   color: rgba(255, 255, 255, 0.84);
 }
@@ -1177,6 +1182,17 @@ form button:hover {
   margin-top: 8px;
   color: var(--muted);
 }
+.finish-widget--deadline {
+  top: 110px;
+  bottom: auto;
+  left: auto;
+  cursor: default;
+}
+.finish-widget--deadline:hover {
+  background: rgba(255, 253, 250, 0.88);
+  transform: none;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+}
 
 /* Smaller map: about half the previous visual height */
 .real-map-module {
@@ -1214,10 +1230,30 @@ form button:hover {
   background: #dfeadd;
   border: 1px solid rgba(40, 88, 58, 0.22);
 }
+.status-pill.reserved {
+  color: #6f6254;
+  background: #f5ecdf;
+  border: 1px solid rgba(180, 155, 120, 0.4);
+}
 .status-pill.sold {
   color: #7a6e66;
   background: #e2d8cf;
   border: 1px solid rgba(122, 110, 102, 0.25);
+}
+.apartments-table tbody tr.is-sold {
+  cursor: default;
+}
+.apartments-table tbody tr.is-sold:hover {
+  background: inherit;
+}
+.apartments-table tbody tr.is-sold:nth-child(odd):hover {
+  background: #eee7dd;
+}
+.apartments-table tbody tr.is-sold:nth-child(even):hover {
+  background: #e6ddd2;
+}
+.apartments-table .is-price-hidden {
+  visibility: hidden;
 }
 
 .card-modal[hidden] {
@@ -1352,6 +1388,142 @@ form button:hover {
 body.modal-open {
   overflow: hidden;
 }
+
+.promo-bubble {
+  position: fixed;
+  right: max(52px, env(safe-area-inset-right));
+  bottom: max(54px, env(safe-area-inset-bottom));
+  z-index: 40;
+  width: min(320px, calc(100vw - 40px));
+  padding: 22px;
+  border: 0;
+  border-radius: 24px;
+  background: rgba(255, 253, 250, 0.88);
+  color: var(--dark);
+  font: inherit;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+  transition:
+    background 0.35s ease,
+    color 0.35s ease,
+    transform 0.18s ease,
+    box-shadow 0.35s ease;
+}
+.promo-bubble.is-contrast {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 12px 36px rgba(25, 20, 17, 0.28);
+}
+.promo-bubble:hover {
+  background: var(--paper);
+  transform: translateY(-3px);
+  box-shadow: 0 28px 70px rgba(112, 70, 57, 0.24);
+}
+.promo-bubble.is-contrast:hover {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 16px 40px rgba(25, 20, 17, 0.34);
+}
+.promo-bubble:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.promo-modal[hidden] {
+  display: none;
+}
+.promo-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+.promo-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(25, 20, 17, 0.62);
+  backdrop-filter: blur(3px);
+}
+.promo-modal-dialog {
+  position: relative;
+  z-index: 1;
+  width: min(920px, calc(100vw - 36px));
+  max-height: calc(100vh - 36px);
+  overflow: auto;
+  border-radius: 28px;
+  background: #f2e8da;
+  border: 1px solid rgba(112, 70, 57, 0.2);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  padding: 32px 40px 36px;
+  text-align: center;
+}
+.promo-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(112, 70, 57, 0.14);
+  color: var(--primary);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+.promo-modal-eyebrow {
+  margin: 0 0 12px;
+  color: var(--accent);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  font-size: 12px;
+}
+.promo-modal-dialog h2 {
+  margin: 0 0 22px;
+  font-size: clamp(34px, 4.8vw, 52px);
+  line-height: 1.05;
+  color: var(--primary);
+}
+.promo-modal-dialog p {
+  margin: 0 0 18px;
+  font-size: clamp(18px, 2.4vw, 22px);
+  line-height: 1.55;
+  color: var(--dark);
+}
+.promo-modal-highlight {
+  margin-bottom: 28px !important;
+  font-weight: 700;
+  font-size: clamp(19px, 2.5vw, 24px);
+  color: var(--primary);
+}
+.promo-modal-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 420px;
+  min-height: 56px;
+  padding: 18px 32px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 800;
+  font-size: 18px;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+.promo-modal-cta:hover {
+  background: var(--accent);
+  transform: translateY(-1px);
+}
 .apartments-table th,
 .apartments-table td {
   vertical-align: middle;
@@ -1368,6 +1540,12 @@ body.modal-open {
     left: 24px;
     right: auto;
     bottom: 28px;
+  }
+  .finish-widget--deadline {
+    top: 100px;
+    right: 24px;
+    left: auto;
+    bottom: auto;
   }
   .map-canvas {
     max-height: none;
@@ -1599,7 +1777,7 @@ body.modal-open {
   }
 
   .hero-content p:not(.eyebrow):not(.lead) {
-    font-size: clamp(16px, 4.2vw, 20px);
+    font-size: clamp(11.2px, 2.94vw, 14px);
     line-height: 1.45;
     margin-top: 16px;
   }
@@ -1623,6 +1801,17 @@ body.modal-open {
     width: calc(100% - 32px);
     margin: 0 16px 16px;
     order: 1;
+  }
+
+  .finish-widget--deadline {
+    position: absolute;
+    top: max(80px, calc(env(safe-area-inset-top) + 68px));
+    right: 16px;
+    left: auto;
+    bottom: auto;
+    width: calc(100% - 32px);
+    margin: 0;
+    order: unset;
   }
 
   .section-head,
@@ -1967,6 +2156,23 @@ body.modal-open {
     padding: 12px;
   }
   .card-modal-dialog {
+    width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  .promo-bubble {
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    width: min(320px, calc(100vw - 32px));
+    padding: 22px;
+    font-size: 18px;
+  }
+  .promo-modal {
+    padding: 12px;
+  }
+  .promo-modal-dialog {
     width: calc(100vw - 24px);
     max-height: calc(100vh - 24px);
     padding: 14px;

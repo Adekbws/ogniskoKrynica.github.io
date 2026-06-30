@@ -4,5 +4,6 @@ Allow: /
 Disallow: /projekt
 Disallow: /mapa/
 Disallow: /.history/
+Disallow: /zarzadzanie-km-p7x4m2/
 
 Sitemap: https://apartamentyognisko.pl/sitemap.xml

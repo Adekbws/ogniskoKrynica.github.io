@@ -108,11 +108,65 @@
     return `${Math.round(value).toLocaleString("pl-PL")} zł/m²`;
   }
 
-  document.querySelectorAll(".apartments-table tbody tr").forEach((row) => {
+  const STATUS_LABELS = {
+    available: "Dostępny",
+    reserved: "Rezerwacja",
+    sold: "Sprzedany",
+  };
+
+  function applyApartmentStatus(row, status) {
+    const statusCell = row.children[5];
+    if (!statusCell) return;
+    const safeStatus = STATUS_LABELS[status] ? status : "available";
+    const label = STATUS_LABELS[safeStatus];
+    statusCell.innerHTML = `<span class="status-pill ${safeStatus}" aria-label="${label}"><span class="status-pill-text" aria-hidden="true">${label}</span></span>`;
+  }
+
+  function updateRowInteractivity(row) {
+    const isSold = row.dataset.status === "sold";
+    row.classList.toggle("is-sold", isSold);
+
+    if (isSold) {
+      row.tabIndex = -1;
+      row.removeAttribute("role");
+      row.removeAttribute("aria-label");
+      return;
+    }
+
+    const apartmentNo = row.children[0]?.textContent?.trim() || "";
+    row.tabIndex = 0;
+    row.setAttribute("role", "button");
+    row.setAttribute(
+      "aria-label",
+      apartmentNo
+        ? `Otwórz kartę lokalu ${apartmentNo}`
+        : "Otwórz kartę lokalu",
+    );
+  }
+
+  function applyApartmentRowState(row, status) {
+    const safeStatus = STATUS_LABELS[status] ? status : "available";
+    row.dataset.status = safeStatus;
+    applyApartmentStatus(row, safeStatus);
+    updateRowInteractivity(row);
+  }
+
+  function renderApartmentPricesForRow(row) {
     const areaCell = row.children[2];
     const pricePerM2Cell = row.children[3];
     const totalPriceCell = row.children[4];
     if (!areaCell || !pricePerM2Cell || !totalPriceCell) return;
+
+    if (row.dataset.status === "sold") {
+      pricePerM2Cell.textContent = "";
+      totalPriceCell.textContent = "";
+      pricePerM2Cell.classList.add("is-price-hidden");
+      totalPriceCell.classList.add("is-price-hidden");
+      return;
+    }
+
+    pricePerM2Cell.classList.remove("is-price-hidden");
+    totalPriceCell.classList.remove("is-price-hidden");
 
     const area = parsePolishArea(areaCell.textContent);
     const pricePerM2 = Number(row.dataset.pricePerM2);
@@ -124,7 +178,47 @@
       pricePerM2Cell.textContent = "—";
       totalPriceCell.textContent = "—";
     }
-  });
+  }
+
+  function renderApartmentPrices() {
+    document.querySelectorAll(".apartments-table tbody tr").forEach((row) => {
+      renderApartmentPricesForRow(row);
+    });
+  }
+
+  async function loadApartmentData() {
+    renderApartmentPrices();
+
+    try {
+      const response = await fetch("api/lokale.php", {
+        headers: { Accept: "application/json" },
+        cache: "no-store",
+      });
+      if (!response.ok) return;
+
+      const data = await response.json();
+      if (!data || typeof data !== "object") return;
+
+      document.querySelectorAll(".apartments-table tbody tr").forEach((row) => {
+        const apartmentNo = row.children[0]?.textContent?.trim();
+        const apartment = data[apartmentNo];
+        if (!apartment) return;
+
+        if (Number.isFinite(Number(apartment.pricePerM2))) {
+          row.dataset.pricePerM2 = String(apartment.pricePerM2);
+        }
+        if (apartment.status) {
+          applyApartmentRowState(row, apartment.status);
+        }
+      });
+
+      renderApartmentPrices();
+    } catch {
+      // Wartości z data-price-per-m2 w HTML pozostają aktywne.
+    }
+  }
+
+  loadApartmentData();
 
   if (window.location.hash === "#kontakt") {
     scrollToFormFeedback();
@@ -182,7 +276,7 @@
   }
 
   function openCardModal(row) {
-    if (!cardModal) return;
+    if (!cardModal || row.dataset.status === "sold") return;
     const apartmentNo = row.children[0]?.textContent?.trim() || "";
     const apartmentId = normalizeApartmentId(row.dataset.apartmentId || apartmentNo);
     modalTitle.textContent = apartmentNo
@@ -205,7 +299,9 @@
   function closeCardModal() {
     if (!cardModal) return;
     cardModal.hidden = true;
-    document.body.classList.remove("modal-open");
+    if (!promoModal || promoModal.hidden) {
+      document.body.classList.remove("modal-open");
+    }
     setRequestPanel(false);
   }
 
@@ -213,16 +309,11 @@
     const apartmentNo = row.children[0]?.textContent?.trim() || "";
     const apartmentId = normalizeApartmentId(apartmentNo);
     row.dataset.apartmentId = apartmentId;
-    row.tabIndex = 0;
-    row.setAttribute("role", "button");
-    row.setAttribute(
-      "aria-label",
-      apartmentNo
-        ? `Otwórz kartę lokalu ${apartmentNo}`
-        : "Otwórz kartę lokalu",
-    );
+    row.dataset.status = row.dataset.status || "available";
+    updateRowInteractivity(row);
     row.addEventListener("click", () => openCardModal(row));
     row.addEventListener("keydown", (event) => {
+      if (row.dataset.status === "sold") return;
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
         openCardModal(row);
@@ -236,7 +327,7 @@
       const row = Array.from(rows).find(
         (tableRow) => tableRow.dataset.apartmentId === apartmentId,
       );
-      if (!row) return;
+      if (!row || row.dataset.status === "sold") return;
       event.preventDefault();
       openCardModal(row);
     });
@@ -341,8 +432,67 @@
     }
   });
 
+  const promoModal = document.querySelector("#promo-modal");
+  const promoBubble = document.querySelector("#promo-bubble");
+  const promoCloseTriggers = document.querySelectorAll("[data-close-promo]");
+  const promoCta = document.querySelector("[data-promo-cta]");
+
+  function openPromoModal() {
+    if (!promoModal) return;
+    promoModal.hidden = false;
+    document.body.classList.add("modal-open");
+    promoModal.querySelector(".promo-modal-close")?.focus();
+  }
+
+  function closePromoModal() {
+    if (!promoModal) return;
+    promoModal.hidden = true;
+    if (!cardModal || cardModal.hidden) {
+      document.body.classList.remove("modal-open");
+    }
+  }
+
+  promoCloseTriggers.forEach((trigger) => {
+    trigger.addEventListener("click", closePromoModal);
+  });
+
+  promoBubble?.addEventListener("click", () => openPromoModal());
+
+  const heroSection = document.querySelector(".hero");
+  function updatePromoBubbleTheme() {
+    if (!heroSection || !promoBubble) return;
+    const heroRect = heroSection.getBoundingClientRect();
+    const bubbleRect = promoBubble.getBoundingClientRect();
+    const overlapsHero =
+      bubbleRect.bottom > heroRect.top && bubbleRect.top < heroRect.bottom;
+    promoBubble.classList.toggle("is-contrast", !overlapsHero);
+  }
+
+  updatePromoBubbleTheme();
+  window.addEventListener("scroll", updatePromoBubbleTheme, { passive: true });
+  window.addEventListener("resize", updatePromoBubbleTheme);
+
+  promoCta?.addEventListener("click", (event) => {
+    event.preventDefault();
+    closePromoModal();
+    setNavOpen(false);
+    document.getElementById("kontakt")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  });
+
+  if (promoModal) {
+    window.setTimeout(() => openPromoModal(), 400);
+  }
+
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && cardModal && !cardModal.hidden) {
+    if (event.key !== "Escape") return;
+    if (promoModal && !promoModal.hidden) {
+      closePromoModal();
+      return;
+    }
+    if (cardModal && !cardModal.hidden) {
       closeCardModal();
     }
   });
