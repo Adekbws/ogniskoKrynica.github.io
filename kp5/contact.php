@@ -9,7 +9,8 @@ const CONTACT_FROM_NAME = 'Apartamenty Ognisko';
 const CARD_MAIL_DIR = __DIR__ . '/assets/karty/materialy_mail';
 const SITE_URL = 'https://apartamentyognisko.pl/';
 const PRIVACY_URL = 'https://apartamentyognisko.pl/polityka-prywatnosci/';
-const MAIL_LOGO_URL = SITE_URL . 'assets/logo_stopka.png';
+const MAIL_LOGO_PATH = __DIR__ . '/assets/logo_stopka.png';
+const MAIL_LOGO_CID = 'logo@apartamentyognisko';
 const MAIL_FOOTER_WIDTH = 600;
 const MIN_SUBMIT_SECONDS = 3;
 const MAX_SUBMIT_SECONDS = 7200;
@@ -345,14 +346,87 @@ function sendPlainMail(string $to, string $subject, string $body, string $replyT
     return sendViaSmtp($to, $subject, $body, buildMailHeaders($replyTo));
 }
 
-function buildCardMailPlainBody(): string
+function buildCardDownloadUrl(int $apartmentNo): ?string
+{
+    if (findCardMailPdf($apartmentNo) === null) {
+        return null;
+    }
+
+    return SITE_URL . 'karty/lokal-' . $apartmentNo . '.pdf';
+}
+
+function sendCardMail(
+    string $to,
+    string $subject,
+    string $plainBody,
+    string $htmlBody,
+    string $replyTo
+): bool {
+    if (!is_readable(MAIL_LOGO_PATH)) {
+        return sendMultipartMail($to, $subject, $plainBody, $htmlBody, $replyTo);
+    }
+
+    $logoData = file_get_contents(MAIL_LOGO_PATH);
+    if ($logoData === false) {
+        return sendMultipartMail($to, $subject, $plainBody, $htmlBody, $replyTo);
+    }
+
+    $relatedBoundary = '=_Related_' . bin2hex(random_bytes(8));
+    $altBoundary = '=_Alt_' . bin2hex(random_bytes(8));
+    $headers = buildMailHeaders($replyTo, 'multipart/related; boundary="' . $relatedBoundary . '"');
+    $message = '--' . $relatedBoundary . "\r\n"
+        . 'Content-Type: multipart/alternative; boundary="' . $altBoundary . '"' . "\r\n\r\n"
+        . '--' . $altBoundary . "\r\n"
+        . "Content-Type: text/plain; charset=UTF-8\r\n"
+        . "Content-Transfer-Encoding: 8bit\r\n\r\n"
+        . $plainBody . "\r\n\r\n"
+        . '--' . $altBoundary . "\r\n"
+        . "Content-Type: text/html; charset=UTF-8\r\n"
+        . "Content-Transfer-Encoding: 8bit\r\n\r\n"
+        . $htmlBody . "\r\n\r\n"
+        . '--' . $altBoundary . "--\r\n\r\n"
+        . '--' . $relatedBoundary . "\r\n"
+        . 'Content-Type: image/png; name="logo_stopka.png"' . "\r\n"
+        . "Content-Transfer-Encoding: base64\r\n"
+        . 'Content-ID: <' . MAIL_LOGO_CID . '>' . "\r\n"
+        . 'Content-Disposition: inline; filename="logo_stopka.png"' . "\r\n\r\n"
+        . chunk_split(base64_encode($logoData)) . "\r\n"
+        . '--' . $relatedBoundary . '--';
+
+    return sendViaSmtp($to, $subject, $message, $headers);
+}
+
+function sendMultipartMail(
+    string $to,
+    string $subject,
+    string $plainBody,
+    string $htmlBody,
+    string $replyTo
+): bool {
+    $boundary = '=_Alt_' . bin2hex(random_bytes(8));
+    $headers = buildMailHeaders($replyTo, 'multipart/alternative; boundary="' . $boundary . '"');
+    $message = '--' . $boundary . "\r\n"
+        . "Content-Type: text/plain; charset=UTF-8\r\n"
+        . "Content-Transfer-Encoding: 8bit\r\n\r\n"
+        . $plainBody . "\r\n\r\n"
+        . '--' . $boundary . "\r\n"
+        . "Content-Type: text/html; charset=UTF-8\r\n"
+        . "Content-Transfer-Encoding: 8bit\r\n\r\n"
+        . $htmlBody . "\r\n\r\n"
+        . '--' . $boundary . '--';
+
+    return sendViaSmtp($to, $subject, $message, $headers);
+}
+
+function buildCardMailPlainBody(string $downloadUrl): string
 {
     return implode("\n", [
         'Dzień dobry,',
         '',
         'Dziękujemy za zainteresowanie naszą inwestycją w Krynicy-Zdroju.',
         '',
-        'W załączniku przesyłamy kartę wybranego lokalu z jego najważniejszymi informacjami.',
+        'Kartę wybranego lokalu można pobrać pod adresem:',
+        $downloadUrl,
         '',
         'Mamy nadzieję, że pozwoli ona lepiej poznać wyjątkowy charakter inwestycji. Jeśli chcieliby Państwo uzyskać więcej informacji lub umówić się na indywidualną prezentację, pozostajemy do dyspozycji.',
         '',
@@ -370,7 +444,7 @@ function buildCardMailFooterHtml(): string
     $border = '#c8c0b4';
     $link = 'color:' . $text . ';text-decoration:none;font-weight:700;';
     $wrap = 'word-break:break-word;overflow-wrap:break-word;';
-    $logoSrc = htmlspecialchars(MAIL_LOGO_URL, ENT_QUOTES, 'UTF-8');
+    $logoSrc = 'cid:' . MAIL_LOGO_CID;
     $footerWidth = MAIL_FOOTER_WIDTH;
     $padH = 20;
     $innerWidth = $footerWidth - ($padH * 2);
@@ -381,7 +455,7 @@ function buildCardMailFooterHtml(): string
 
     $logo = implode('', [
         '<a href="' . SITE_URL . '" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:block;">',
-        '<img src="' . $logoSrc . '" alt="Apartamenty Ognisko" width="' . $logoImgWidth . '" style="display:block;width:' . $logoImgWidth . 'px;max-width:100%;height:auto;border:0;" />',
+        '<img src="' . $logoSrc . '" alt="Apartamenty Ognisko" width="' . $logoImgWidth . '" border="0" style="display:block;width:' . $logoImgWidth . 'px;max-width:100%;height:auto;border:0;">',
         '</a>',
     ]);
 
@@ -427,8 +501,28 @@ function buildCardMailFooterHtml(): string
     ]);
 }
 
-function buildCardMailHtml(): string
+function buildCardDownloadButtonHtml(string $downloadUrl): string
 {
+    $href = htmlspecialchars($downloadUrl, ENT_QUOTES, 'UTF-8');
+    $buttonStyle = 'display:inline-block;padding:16px 32px;background-color:#873400;color:#ffffff;'
+        . 'font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:700;'
+        . 'text-decoration:none;border-radius:999px;mso-padding-alt:0;';
+
+    return '<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" '
+        . 'style="border-collapse:collapse;width:100%;margin:28px 0;">'
+        . '<tr><td align="center" style="text-align:center;padding:0;">'
+        . '<table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center" '
+        . 'style="border-collapse:collapse;margin:0 auto;">'
+        . '<tr><td align="center" bgcolor="#873400" style="background-color:#873400;border-radius:999px;text-align:center;">'
+        . '<a href="' . $href . '" target="_blank" rel="noopener noreferrer" style="' . $buttonStyle . '">Pobierz kartę</a>'
+        . '</td></tr></table>'
+        . '</td></tr></table>';
+}
+
+function buildCardMailHtml(string $downloadUrl): string
+{
+    $button = buildCardDownloadButtonHtml($downloadUrl);
+
     return implode("\n", [
         '<!DOCTYPE html>',
         '<html lang="pl">',
@@ -437,7 +531,8 @@ function buildCardMailHtml(): string
         '<div style="max-width:600px;margin:0 auto;padding:24px 16px;">',
         '<p style="margin:0 0 16px;">Dzień dobry,</p>',
         '<p style="margin:0 0 16px;">Dziękujemy za zainteresowanie naszą inwestycją w Krynicy-Zdroju.</p>',
-        '<p style="margin:0 0 16px;">W załączniku przesyłamy kartę wybranego lokalu z jego najważniejszymi informacjami.</p>',
+        '<p style="margin:0 0 16px;">Poniżej znajduje się link do karty wybranego lokalu z jego najważniejszymi informacjami:</p>',
+        $button,
         '<p style="margin:0 0 16px;">Mamy nadzieję, że pozwoli ona lepiej poznać wyjątkowy charakter inwestycji. Jeśli chcieliby Państwo uzyskać więcej informacji lub umówić się na indywidualną prezentację, pozostajemy do dyspozycji.</p>',
         '<p style="margin:0 0 16px;">Z przyjemnością odpowiemy na wszystkie pytania i pomożemy wybrać lokal najlepiej dopasowany do Państwa oczekiwań. W celu dalszych informacji, prosimy o odpowiedź na tego e-maila.</p>',
         '<p style="margin:0 0 24px;">Serdecznie pozdrawiamy,<br />Apartamenty Ognisko</p>',
@@ -446,62 +541,6 @@ function buildCardMailHtml(): string
         '</body>',
         '</html>',
     ]);
-}
-
-function sendMailWithPdf(
-    string $to,
-    string $subject,
-    string $plainBody,
-    string $replyTo,
-    string $pdfPath,
-    string $attachmentName,
-    ?string $htmlBody = null
-): bool {
-    if (!is_readable($pdfPath)) {
-        return false;
-    }
-
-    $pdfData = file_get_contents($pdfPath);
-    if ($pdfData === false) {
-        return false;
-    }
-
-    $useHtml = $htmlBody !== null && $htmlBody !== '';
-    $mixedBoundary = '=_Mixed_' . bin2hex(random_bytes(8));
-    $headers = buildMailHeaders($replyTo, 'multipart/mixed; boundary="' . $mixedBoundary . '"');
-    $message = '';
-
-    if ($useHtml) {
-        $altBoundary = '=_Alt_' . bin2hex(random_bytes(8));
-
-        $message .= '--' . $mixedBoundary . "\r\n";
-        $message .= 'Content-Type: multipart/alternative; boundary="' . $altBoundary . '"' . "\r\n\r\n";
-
-        $message .= '--' . $altBoundary . "\r\n";
-        $message .= "Content-Type: text/plain; charset=UTF-8\r\n";
-        $message .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
-        $message .= $plainBody . "\r\n\r\n";
-
-        $message .= '--' . $altBoundary . "\r\n";
-        $message .= "Content-Type: text/html; charset=UTF-8\r\n";
-        $message .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
-        $message .= $htmlBody . "\r\n\r\n";
-        $message .= '--' . $altBoundary . "--\r\n\r\n";
-    } else {
-        $message .= '--' . $mixedBoundary . "\r\n";
-        $message .= "Content-Type: text/plain; charset=UTF-8\r\n";
-        $message .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
-        $message .= $plainBody . "\r\n\r\n";
-    }
-
-    $message .= '--' . $mixedBoundary . "\r\n";
-    $message .= 'Content-Type: application/pdf; name="' . $attachmentName . "\"\r\n";
-    $message .= "Content-Transfer-Encoding: base64\r\n";
-    $message .= 'Content-Disposition: attachment; filename="' . $attachmentName . "\"\r\n\r\n";
-    $message .= chunk_split(base64_encode($pdfData)) . "\r\n";
-    $message .= '--' . $mixedBoundary . '--';
-
-    return sendViaSmtp($to, $subject, $message, $headers);
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -555,23 +594,19 @@ if ($formType === 'card') {
         respond(false, 'apartment', $redirect);
     }
 
-    $pdfPath = findCardMailPdf($apartmentNo);
-    if ($pdfPath === null) {
+    $downloadUrl = buildCardDownloadUrl($apartmentNo);
+    if ($downloadUrl === null) {
         respond(false, 'card_file', $redirect);
     }
 
-    $attachmentName = 'Apartamenty-Ognisko-lokal-' . $apartmentNo . '.pdf';
     $userSubject = 'Apartamenty Ognisko - karta Twojego lokalu.';
-    $userBody = buildCardMailPlainBody();
 
-    $sentToUser = sendMailWithPdf(
+    $sentToUser = sendCardMail(
         $email,
         $userSubject,
-        $userBody,
-        CONTACT_FROM,
-        $pdfPath,
-        $attachmentName,
-        buildCardMailHtml()
+        buildCardMailPlainBody($downloadUrl),
+        buildCardMailHtml($downloadUrl),
+        CONTACT_FROM
     );
 
     if (!$sentToUser) {
@@ -584,7 +619,7 @@ if ($formType === 'card') {
         '',
         'Lokal: ' . $apartmentNo,
         'E-mail odbiorcy: ' . $email,
-        'Plik: ' . basename($pdfPath),
+        'Link do pobrania: ' . $downloadUrl,
         '',
         'IP: ' . $ip,
         'Data: ' . date('Y-m-d H:i:s'),
