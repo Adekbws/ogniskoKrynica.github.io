@@ -58,9 +58,7 @@ function respond(bool $ok, string $message, ?string $redirect = null): void
     if (!in_array($target, ALLOWED_REDIRECTS, true)) {
         $target = '/';
     }
-    $separator = str_contains($target, '?') ? '&' : '?';
-    $param = $ok ? 'sent=1' : 'error=' . rawurlencode($message);
-    header('Location: ' . $target . $separator . $param, true, 303);
+    header('Location: ' . $target . '#kontakt', true, 303);
     exit;
 }
 

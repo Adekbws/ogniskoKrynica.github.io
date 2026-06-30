@@ -2,16 +2,6 @@
   const CONTACT_PHONE = "+48664663940";
   const FORM_TS_SELECTOR = "[data-form-ts]";
   const FORM_STATUS_SELECTOR = "[data-form-status]";
-  const FORM_ERROR_MESSAGES = {
-    spam: "Nie udało się wysłać formularza. Spróbuj ponownie lub napisz na kontakt@apartamentyognisko.pl.",
-    timing: "Formularz wysłano zbyt szybko. Odśwież stronę i spróbuj ponownie.",
-    rate: "Zbyt wiele prób w krótkim czasie. Spróbuj ponownie za chwilę.",
-    email: "Podaj poprawny adres e-mail.",
-    send: "Wystąpił błąd wysyłki. Napisz do nas na kontakt@apartamentyognisko.pl.",
-    apartment: "Nie udało się rozpoznać numeru lokalu. Spróbuj ponownie.",
-    card_file:
-      "Nie udało się przygotować karty lokalu. Napisz do nas na kontakt@apartamentyognisko.pl.",
-  };
 
   document.querySelectorAll(".nav-cta--menu").forEach((link) => {
     link.href = `tel:${CONTACT_PHONE}`;
@@ -32,16 +22,6 @@
     input.value = formTimestamp;
   });
 
-  function getMaxScrollTop() {
-    return Math.max(
-      0,
-      Math.max(
-        document.documentElement.scrollHeight,
-        document.body.scrollHeight,
-      ) - window.innerHeight,
-    );
-  }
-
   function setContactFormStatus(message, isError = false) {
     const statusNode = document.querySelector(FORM_STATUS_SELECTOR);
     if (!statusNode) return;
@@ -53,92 +33,12 @@
 
   function scrollToFormFeedback() {
     const statusNode = document.querySelector(FORM_STATUS_SELECTOR);
-    const root = document.documentElement;
-    const previousScrollBehavior = root.style.scrollBehavior;
-    root.style.scrollBehavior = "auto";
-
-    const scroll = () => {
-      if (statusNode && !statusNode.hidden) {
-        statusNode.scrollIntoView({ block: "end", inline: "nearest" });
-        return;
-      }
-      document
-        .getElementById("kontakt")
-        ?.scrollIntoView({ block: "end", inline: "nearest" });
-    };
-
-    scroll();
-    requestAnimationFrame(() => requestAnimationFrame(scroll));
-    setTimeout(() => {
-      scroll();
-      root.style.scrollBehavior = previousScrollBehavior;
-    }, 50);
+    const target =
+      statusNode && !statusNode.hidden
+        ? statusNode
+        : document.getElementById("kontakt");
+    target?.scrollIntoView({ block: "end", inline: "nearest" });
   }
-
-  function scheduleContactScroll() {
-    const root = document.documentElement;
-    const previousScrollBehavior = root.style.scrollBehavior;
-    root.style.scrollBehavior = "auto";
-
-    const scroll = () => {
-      scrollToFormFeedback();
-      window.scrollTo({ top: getMaxScrollTop(), left: 0, behavior: "auto" });
-    };
-
-    scroll();
-
-    const resizeObserver = new ResizeObserver(scroll);
-    resizeObserver.observe(root);
-    if (document.body) {
-      resizeObserver.observe(document.body);
-    }
-
-    document.querySelectorAll("img").forEach((image) => {
-      if (!image.complete) {
-        image.addEventListener("load", scroll, { once: true });
-        image.addEventListener("error", scroll, { once: true });
-      }
-    });
-
-    window.addEventListener("load", scroll, { once: true });
-    document.fonts?.ready?.then(scroll);
-    [100, 400, 1000, 2500].forEach((delay) => setTimeout(scroll, delay));
-
-    setTimeout(() => {
-      resizeObserver.disconnect();
-      root.style.scrollBehavior = previousScrollBehavior;
-      scroll();
-    }, 4000);
-  }
-
-  function showContactFormStatus() {
-    const params = new URLSearchParams(window.location.search);
-    const sent = params.get("sent") === "1";
-    const errorCode = params.get("error");
-    if (!sent && !errorCode) return false;
-
-    if (sent) {
-      setContactFormStatus(
-        "Dziękujemy za wiadomość. Odezwiemy się wkrótce.",
-      );
-    } else {
-      setContactFormStatus(
-        FORM_ERROR_MESSAGES[errorCode] ||
-          "Nie udało się wysłać formularza. Spróbuj ponownie.",
-        true,
-      );
-    }
-
-    params.delete("sent");
-    params.delete("error");
-    const query = params.toString();
-    const cleanUrl =
-      window.location.pathname + (query ? `?${query}` : "");
-    window.history.replaceState(null, "", cleanUrl);
-    return true;
-  }
-
-  const contactStatusShown = showContactFormStatus();
 
   const nav = document.querySelector(".nav");
   const toggle = document.querySelector(".nav-toggle");
@@ -228,9 +128,7 @@
     areaCell.insertAdjacentElement("afterend", cell);
   });
 
-  if (contactStatusShown) {
-    scheduleContactScroll();
-  } else if (window.location.hash === "#kontakt") {
+  if (window.location.hash === "#kontakt") {
     scrollToFormFeedback();
   }
 
