@@ -100,10 +100,8 @@
     return parseFloat(match[1].replace(",", "."));
   }
 
-  function parsePolishPrice(text) {
-    const match = String(text).match(/([\d\s]+)/);
-    if (!match) return NaN;
-    return parseInt(match[1].replace(/\s/g, ""), 10);
+  function formatPrice(value) {
+    return `${Math.round(value).toLocaleString("pl-PL")} zł`;
   }
 
   function formatPricePerM2(value) {
@@ -112,20 +110,20 @@
 
   document.querySelectorAll(".apartments-table tbody tr").forEach((row) => {
     const areaCell = row.children[2];
-    const priceCell = row.children[3];
-    if (!areaCell || !priceCell) return;
+    const pricePerM2Cell = row.children[3];
+    const totalPriceCell = row.children[4];
+    if (!areaCell || !pricePerM2Cell || !totalPriceCell) return;
 
     const area = parsePolishArea(areaCell.textContent);
-    const price = parsePolishPrice(priceCell.textContent);
-    const cell = document.createElement("td");
+    const pricePerM2 = Number(row.dataset.pricePerM2);
 
-    if (area > 0 && Number.isFinite(price)) {
-      cell.textContent = formatPricePerM2(price / area);
+    if (area > 0 && Number.isFinite(pricePerM2)) {
+      pricePerM2Cell.textContent = formatPricePerM2(pricePerM2);
+      totalPriceCell.textContent = formatPrice(pricePerM2 * area);
     } else {
-      cell.textContent = "—";
+      pricePerM2Cell.textContent = "—";
+      totalPriceCell.textContent = "—";
     }
-
-    areaCell.insertAdjacentElement("afterend", cell);
   });
 
   if (window.location.hash === "#kontakt") {
