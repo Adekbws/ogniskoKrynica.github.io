@@ -31,14 +31,117 @@
     statusNode.classList.toggle("is-error", isError);
   }
 
+  const SCROLL_GAP = 8;
+  const LAZY_SECTION_SELECTOR =
+    ".image-story, .interiors, .location, .intro, .selector, .investment, .contact, .site-footer";
+
+  function getNavScrollOffset() {
+    const nav = document.querySelector(".nav");
+    if (!nav) return 100;
+    const navTop = parseFloat(getComputedStyle(nav).top) || 0;
+    return navTop + nav.offsetHeight + SCROLL_GAP;
+  }
+
+  function unlockPageSectionsForMeasure() {
+    document.querySelectorAll(LAZY_SECTION_SELECTOR).forEach((section) => {
+      section.style.contentVisibility = "visible";
+    });
+  }
+
+  function scrollToSection(
+    id,
+    { behavior = "smooth", updateHash = true } = {},
+  ) {
+    const target = document.getElementById(id);
+    if (!target) return false;
+
+    unlockPageSectionsForMeasure();
+
+    const run = () => {
+      const top =
+        target.getBoundingClientRect().top +
+        window.scrollY -
+        getNavScrollOffset();
+      window.scrollTo({ top: Math.max(0, top), behavior });
+      if (updateHash) {
+        history.pushState(null, "", `#${id}`);
+      }
+    };
+
+    requestAnimationFrame(() => requestAnimationFrame(run));
+    return true;
+  }
+
   function scrollToFormFeedback() {
     const statusNode = document.querySelector(FORM_STATUS_SELECTOR);
     const target =
       statusNode && !statusNode.hidden
         ? statusNode
         : document.getElementById("kontakt");
-    target?.scrollIntoView({ block: "end", inline: "nearest" });
+    if (!target) return;
+    if (target.id === "kontakt") {
+      scrollToSection("kontakt", { behavior: "smooth", updateHash: false });
+      return;
+    }
+
+    unlockPageSectionsForMeasure();
+    requestAnimationFrame(() => {
+      const top =
+        target.getBoundingClientRect().top +
+        window.scrollY -
+        getNavScrollOffset();
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    });
   }
+
+  function handleInitialHashScroll() {
+    const hash = window.location.hash;
+    if (!hash || hash.length < 2) return;
+    const id = decodeURIComponent(hash.slice(1));
+    if (!document.getElementById(id)) return;
+    if (id === "kontakt") {
+      scrollToFormFeedback();
+      return;
+    }
+    scrollToSection(id, { behavior: "instant", updateHash: false });
+  }
+
+  document.addEventListener("click", (event) => {
+    if (event.defaultPrevented) return;
+    const link = event.target.closest("a[href]");
+    if (!link || link.target === "_blank") return;
+
+    const url = new URL(link.href, window.location.href);
+    if (
+      url.origin !== window.location.origin ||
+      url.pathname !== window.location.pathname ||
+      !url.hash ||
+      url.hash === "#"
+    ) {
+      return;
+    }
+
+    const id = decodeURIComponent(url.hash.slice(1));
+    if (!document.getElementById(id)) return;
+
+    event.preventDefault();
+    if (id === "kontakt") {
+      scrollToFormFeedback();
+    } else {
+      scrollToSection(id);
+    }
+    setNavOpen(false);
+  });
+
+  window.addEventListener("hashchange", () => {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (!id || !document.getElementById(id)) return;
+    if (id === "kontakt") {
+      scrollToFormFeedback();
+      return;
+    }
+    scrollToSection(id, { updateHash: false });
+  });
 
   const nav = document.querySelector(".nav");
   const toggle = document.querySelector(".nav-toggle");
@@ -220,8 +323,10 @@
 
   loadApartmentData();
 
-  if (window.location.hash === "#kontakt") {
-    scrollToFormFeedback();
+  if (document.readyState === "complete") {
+    handleInitialHashScroll();
+  } else {
+    window.addEventListener("load", handleInitialHashScroll, { once: true });
   }
 
   const rows = document.querySelectorAll(".apartments-table tbody tr");
@@ -450,6 +555,7 @@
     if (!cardModal || cardModal.hidden) {
       document.body.classList.remove("modal-open");
     }
+    schedulePromoBubbleThemeUpdate();
   }
 
   promoCloseTriggers.forEach((trigger) => {
@@ -459,31 +565,44 @@
   promoBubble?.addEventListener("click", () => openPromoModal());
 
   const heroSection = document.querySelector(".hero");
+
   function updatePromoBubbleTheme() {
     if (!heroSection || !promoBubble) return;
-    const heroRect = heroSection.getBoundingClientRect();
-    const bubbleRect = promoBubble.getBoundingClientRect();
-    const overlapsHero =
-      bubbleRect.bottom > heroRect.top && bubbleRect.top < heroRect.bottom;
-    promoBubble.classList.toggle("is-contrast", !overlapsHero);
+    if (promoBubble.offsetHeight === 0) {
+      promoBubble.classList.remove("is-contrast");
+      return;
+    }
+
+    const heroBottom = heroSection.getBoundingClientRect().bottom;
+    const bubbleTop = promoBubble.getBoundingClientRect().top;
+    const onBanner = heroBottom > bubbleTop;
+    promoBubble.classList.toggle("is-contrast", !onBanner);
   }
 
-  updatePromoBubbleTheme();
+  function schedulePromoBubbleThemeUpdate() {
+    updatePromoBubbleTheme();
+    requestAnimationFrame(updatePromoBubbleTheme);
+  }
+
+  schedulePromoBubbleThemeUpdate();
   window.addEventListener("scroll", updatePromoBubbleTheme, { passive: true });
-  window.addEventListener("resize", updatePromoBubbleTheme);
+  window.addEventListener("resize", schedulePromoBubbleThemeUpdate);
+  window.addEventListener("load", schedulePromoBubbleThemeUpdate);
+  if (promoBubble && typeof ResizeObserver !== "undefined") {
+    new ResizeObserver(updatePromoBubbleTheme).observe(promoBubble);
+  }
 
   promoCta?.addEventListener("click", (event) => {
     event.preventDefault();
     closePromoModal();
-    setNavOpen(false);
-    document.getElementById("kontakt")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    scrollToFormFeedback();
   });
 
   if (promoModal) {
-    window.setTimeout(() => openPromoModal(), 400);
+    window.setTimeout(() => {
+      openPromoModal();
+      schedulePromoBubbleThemeUpdate();
+    }, 400);
   }
 
   document.addEventListener("keydown", (event) => {
