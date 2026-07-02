@@ -1538,6 +1538,7 @@ body.modal-open {
 
 @media (max-width: 1600px) {
   .hero-content {
+    transform: none;
     margin: 0 30px 54px;
   }
 }
